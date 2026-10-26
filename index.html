@@ -105,6 +105,7 @@
   .btn-primary{ background:var(--primary); color:var(--primary-ink); }
   .btn-ghost{ background:var(--surface-2); color:var(--ink); border:1px solid var(--border) !important; }
   .btn-danger{ background:var(--critical-wash); color:var(--critical); }
+  .btn-danger.armed{ background:var(--critical); color:#fff; }
   .btn-sm{ padding:7px 12px; font-size:12.5px; }
   .row-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
 
@@ -126,6 +127,12 @@
   .alloc-row .swatch{ width:12px; height:12px; border-radius:3px; background:var(--c); justify-self:center; }
   .alloc-row .nm{ font-size:13.5px; font-weight:700; }
   .alloc-person{ grid-column:2 / span 2; margin-top:-2px; }
+
+  .name-suggest{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .name-suggest .lbl{ font-size:11.5px; color:var(--ink-muted); width:100%; }
+  .name-chip{ border:1px solid var(--grid); background:var(--surface-2); color:var(--ink); border-radius:999px;
+    padding:5px 13px; font-size:12.5px; font-weight:600; cursor:pointer; }
+  .name-chip:active, .name-chip.is-active{ background:var(--primary); color:var(--primary-ink); border-color:var(--primary); }
   .alloc-summary{ display:flex; justify-content:space-between; font-size:13px; margin-top:10px; padding-top:10px; border-top:1px solid var(--grid); }
   .alloc-summary b{ font-variant-numeric:tabular-nums; }
   .alloc-summary.over b{ color:var(--critical); }
@@ -196,7 +203,6 @@
   <header class="top">
     <h1>💰 صندوق المال</h1>
     <div class="sub">دخلك يتوزع تلقائيًا على صناديقك — يعمل على كل أجهزتك · <span id="app-version">Firebase</span> <button class="logout-btn" id="logout-btn" type="button">خروج</button></div>
-    <div id="debug-line" style="font-size:11px;color:var(--ink-muted);margin-top:4px;min-height:14px;"></div>
   </header>
   <nav class="tabs" id="tabs"></nav>
   <main id="page"></main>
@@ -455,6 +461,24 @@
   function nextSeq(){ state._seq = (state._seq||0) + 1; return state._seq; }
   function todayStr(){ return new Date().toISOString().slice(0,10); }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  // Builds a <select> of existing people's names from a debt list (iOwe /
+  // owedToMe) instead of a free-text field -- picking an existing name avoids
+  // typos silently creating a duplicate person. `placeholder` is the empty
+  // "no selection yet" option; pass allowEmpty:false to make the field
+  // effectively required (still shows the placeholder, just not meant to be
+  // left selected).
+  function personSelect(listKey, selectedName, placeholder){
+    var people = (state.debts[listKey]||[]).slice().sort(function(a,b){ return a.name.localeCompare(b.name,"ar"); });
+    var opts = '<option value="">'+esc(placeholder)+'</option>';
+    if(!people.length){
+      opts += '<option value="" disabled>-- لا يوجد أشخاص بعد، أضفهم من صفحة '+(listKey==="iOwe"?"دين علي":"دين لي")+' --</option>';
+    } else {
+      opts += people.map(function(p){
+        return '<option value="'+esc(p.name)+'"'+(p.name===selectedName?" selected":"")+'>'+esc(p.name)+'</option>';
+      }).join("");
+    }
+    return opts;
+  }
   // Arabic-Indic (٠-٩) and Extended Arabic-Indic/Persian (۰-۹) digits, and Arabic
   // decimal/thousands separators, don't parse with parseFloat — normalize them to
   // plain Western digits first. Needed because amount fields are type="text" (see
@@ -515,7 +539,7 @@
   // ---------- state ----------
   var state = null;
   var db = null, docRef = null;
-  var ui = { page: "home", openPerson: {}, expandedLogs: {} };
+  var ui = { page: "home", openPerson: {}, expandedLogs: {}, confirmDeletePerson: {} };
 
   // Reminder amounts shown as a light placeholder hint inside an empty needs
   // amount field — not a real stored value, just a nudge for how much that
@@ -1012,6 +1036,13 @@
     state.subGoals[key] = state.subGoals[key].filter(function(g){ return g.id!==goalId; });
     persist();
   }
+  // ---------- debt person removal ----------
+  function removeDebtPerson(listKey, personId){
+    state.debts[listKey] = state.debts[listKey].filter(function(p){ return p.id!==personId; });
+    delete ui.openPerson[listKey+"|"+personId];
+    delete ui.confirmDeletePerson[listKey+"|"+personId];
+    persist();
+  }
   function goalTransact(key, goalId, type){
     var goal = state.subGoals[key].filter(function(g){ return g.id===goalId; })[0]; if(!goal) return;
     var input = $("#goalamt-"+goalId);
@@ -1291,8 +1322,9 @@
       '</div>' +
       '<div class="field"><label>من وين (المصدر)</label><input type="text" id="inc-source" placeholder="راتب، سلفة، عمل إضافي..."></div>' +
       '<div class="field"><label>المبلغ</label><input type="text" inputmode="decimal" id="inc-amount" placeholder="0"></div>' +
-      '<div class="field"><label>سداد دين لي (اختياري)</label><input type="text" id="inc-repay-person" placeholder="اسم الشخص إذا هذا الدخل سداد دين له" list="inc-repay-names">' +
-        '<datalist id="inc-repay-names">' + state.debts.owedToMe.map(function(p){ return '<option value="'+esc(p.name)+'">'; }).join("") + '</datalist></div>' +
+      '<div class="field"><label>سداد دين لي (اختياري)</label><select id="inc-repay-person">' +
+        personSelect("owedToMe", "", "-- بدون، هذا مش سداد دين --") +
+      '</select></div>' +
       '<div class="row-actions"><button class="btn btn-primary" data-act="add-income">➕ إضافة</button>' +
       (state.income.length ? '<button class="btn btn-ghost" data-act="undo-income">↩ تراجع عن آخر دخل</button>' : '') +
       '</div></div>';
@@ -1310,7 +1342,9 @@
           '<input type="text" inputmode="decimal" id="alloc-'+k+'" value="'+(p.alloc[k]||0)+'" oninput="window.__moneyApp.allocInput()">';
         html += '</div>';
         if(k==="iOwe"){
-          html += '<div class="field alloc-person"><input type="text" id="alloc-person-iOwe" placeholder="اسم الشخص يلي بتسدد له" value="'+esc(p.iOwePerson||"")+'"></div>';
+          html += '<div class="field alloc-person"><select id="alloc-person-iOwe">' +
+            personSelect("iOwe", p.iOwePerson||"", "-- اختر الشخص يلي بتسدد له --") +
+          '</select></div>';
         }
       });
       html += '<div class="alloc-summary" id="alloc-summary"><span>الموزَّع الآن</span><b id="alloc-summary-val">0</b></div>';
@@ -1619,8 +1653,12 @@
       '</div></div>';
 
     html += '<div class="card"><h2><span class="ic">➕</span> تسجيل عملية</h2>' +
-      '<div class="field"><label>اسم الشخص</label><input type="text" id="debt-name-'+listKey+'" placeholder="اسم الشخص" list="names-'+listKey+'">' +
-      '<datalist id="names-'+listKey+'">' + state.debts[listKey].map(function(p){ return '<option value="'+esc(p.name)+'">'; }).join("") + '</datalist></div>' +
+      '<div class="field"><label>اسم الشخص</label><input type="text" id="debt-name-'+listKey+'" placeholder="اسم جديد، أو اختر من تحت">' +
+      (state.debts[listKey].length ? '<div class="name-suggest"><span class="lbl">موجودين عندك:</span>' +
+        state.debts[listKey].slice().sort(function(a,b){ return a.name.localeCompare(b.name,"ar"); }).map(function(p){
+          return '<button type="button" class="name-chip" data-act="debt-pick-name" data-key="'+listKey+'" data-name="'+esc(p.name)+'">'+esc(p.name)+'</button>';
+        }).join("") + '</div>' : '') +
+      '</div>' +
       '<div class="grid2"><div class="field"><label>المبلغ</label><input type="text" inputmode="decimal" id="debt-amount-'+listKey+'" placeholder="0"></div>' +
       '<div class="field"><label>العملة</label><select id="debt-currency-'+listKey+'">' +
         DEBT_CURRENCIES.map(function(c){ return '<option value="'+esc(c)+'">'+esc(c)+'</option>'; }).join("") +
@@ -1644,12 +1682,19 @@
       if(open){
         var entries = p.entries.slice().sort(function(a,b){ return (b.seq||0)-(a.seq||0); });
         var ev = logView("debtentries-"+listKey+"-"+p.id, entries);
+        var pk = listKey+"|"+p.id;
+        var armed = !!ui.confirmDeletePerson[pk];
         html += '<div class="person-detail"><table class="log"><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>العملة</th><th>ملاحظة</th></tr>' +
           ev.rows.map(function(e){
             var label = e.type==="repay" ? "سداد" : (e.type==="lend" ? "إقراض" : "دين جديد");
             var cls = e.type==="repay" ? "out" : "in";
             return '<tr><td>'+fmtDate(e.date)+'</td><td><span class="badge '+cls+'">'+label+'</span></td><td>'+fmt(e.amount)+'</td><td>'+esc(entryCurrency(e))+'</td><td>'+esc(e.note||"—")+'</td></tr>';
-          }).join("") + '</table>' + ev.toggle + '</div>';
+          }).join("") + '</table>' + ev.toggle +
+          '<div class="row-actions" style="margin-top:10px;">' +
+            '<button class="btn btn-danger'+(armed?" armed":"")+' btn-sm" data-act="debt-delete-person" data-key="'+listKey+'" data-person="'+p.id+'">' +
+              (armed ? "⚠️ متأكد؟ دوس تاني للحذف نهائي" : "🗑 حذف "+esc(p.name)+" نهائيًا") +
+            '</button>' +
+          '</div></div>';
       }
       html += '</div>';
     });
@@ -1851,6 +1896,26 @@
         else if(act==="fund-gold-sell-undo") undoFundGoldSell(key);
         else if(act==="stock-buy") stockBuy();
         else if(act==="stock-buy-undo") undoStockBuy();
+        else if(act==="debt-delete-person"){
+          var pid = actEl.getAttribute("data-person");
+          var pk2 = key+"|"+pid;
+          if(ui.confirmDeletePerson[pk2]){
+            removeDebtPerson(key, pid);
+          } else {
+            ui.confirmDeletePerson[pk2] = true;
+            render();
+          }
+        }
+        else if(act==="debt-pick-name"){
+          // Just fills the name field from an existing person and moves on to
+          // the amount -- no state change, so no render() here (a re-render
+          // would wipe whatever the person already typed into the amount/note
+          // fields before picking the name).
+          var nameInput = document.getElementById("debt-name-"+key);
+          if(nameInput) nameInput.value = actEl.getAttribute("data-name");
+          var amountInput = document.getElementById("debt-amount-"+key);
+          if(amountInput) amountInput.focus();
+        }
         else if(act==="log-toggle"){
           // Pure display toggle — not part of state, so a plain render() only
           // (no persist/saveToDb): it never writes to Firestore and can't
@@ -1876,6 +1941,7 @@
     if(personToggle && !e.target.closest("[data-act]")){
       var k = personToggle.getAttribute("data-toggle-person");
       ui.openPerson[k] = !ui.openPerson[k];
+      delete ui.confirmDeletePerson[k]; // closing/reopening always starts unarmed
       render();
       return;
     }
