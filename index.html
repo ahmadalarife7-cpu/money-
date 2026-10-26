@@ -1,0 +1,1969 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+  :root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}
+  img{max-width:100%}
+  [hidden]:not([hidden=until-found i]){display:none!important}
+</style>
+</head>
+<body>
+<title>صندوق المال</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --page:#f9f9f7; --surface:#fcfcfb; --surface-2:#f1f0ec;
+    --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+    --grid:#e1e0d9; --border:rgba(11,11,11,0.10);
+    --primary:#2a78d6; --primary-ink:#ffffff; --primary-wash:#e8f0fc;
+    --good:#0ca30c; --critical:#d03b3b; --critical-wash:#fbe9e9; --warning:#fab219;
+    --cat-emergency:#2a78d6; --cat-goals:#eb6834; --cat-stocks:#1baf7a;
+    --cat-gold:#eda100; --cat-luxury:#e87ba4; --cat-owed:#008300; --cat-iowe:#d03b3b;
+    --radius:16px; --radius-sm:10px;
+    --shadow:0 1px 2px rgba(11,11,11,.05), 0 6px 18px rgba(11,11,11,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+      --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#918f89;
+      --grid:#2c2c2a; --border:rgba(255,255,255,0.10);
+      --primary:#3987e5; --primary-ink:#ffffff; --primary-wash:#173154;
+      --good:#0ca30c; --critical:#e66767; --critical-wash:#3a1a18; --warning:#c98500;
+      --cat-emergency:#3987e5; --cat-goals:#d95926; --cat-stocks:#199e70;
+      --cat-gold:#c98500; --cat-luxury:#d55181; --cat-owed:#008300; --cat-iowe:#e66767;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+    --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#918f89;
+    --grid:#2c2c2a; --border:rgba(255,255,255,0.10);
+    --primary:#3987e5; --primary-ink:#ffffff; --primary-wash:#173154;
+    --good:#0ca30c; --critical:#e66767; --critical-wash:#3a1a18; --warning:#c98500;
+    --cat-emergency:#3987e5; --cat-goals:#d95926; --cat-stocks:#199e70;
+    --cat-gold:#c98500; --cat-luxury:#d55181; --cat-owed:#008300; --cat-iowe:#e66767;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--page); color:var(--ink);
+    font-family:'Tajawal', system-ui, sans-serif; direction:rtl;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{ max-width:760px; margin:0 auto; padding:0 16px 64px; min-height:100vh; }
+
+  header.top{ position:sticky; top:0; z-index:20; background:var(--page); padding:16px 0 8px; }
+  header.top h1{ font-size:19px; font-weight:900; margin:0 0 2px; }
+  header.top .sub{ font-size:12.5px; color:var(--ink-muted); }
+
+  nav.tabs{ position:sticky; top:52px; z-index:19; background:var(--page);
+    display:flex; gap:6px; overflow-x:auto; padding:10px 0 10px; margin-bottom:4px;
+    scrollbar-width:none; }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{ flex:0 0 auto; border:1px solid var(--border); background:var(--surface);
+    color:var(--ink-2); font-family:inherit; font-size:13px; font-weight:700;
+    padding:8px 14px; border-radius:999px; cursor:pointer; white-space:nowrap;
+    display:flex; align-items:center; gap:6px; transition:background .15s,color .15s,border-color .15s; }
+  nav.tabs button.active{ background:var(--primary); color:var(--primary-ink); border-color:var(--primary); }
+  nav.tabs button .dot{ width:8px; height:8px; border-radius:50%; background:var(--dot,var(--ink-muted)); }
+
+  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px; margin-bottom:14px; box-shadow:var(--shadow); }
+  .card h2{ font-size:15px; margin:0 0 12px; font-weight:800; display:flex; align-items:center; gap:8px; }
+  .card h2 .ic{ font-size:16px; }
+  .card .hint{ font-size:12px; color:var(--ink-muted); margin-top:-6px; margin-bottom:12px; }
+
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  @media (max-width:480px){ .grid3{ grid-template-columns:1fr 1fr; } }
+
+  label{ display:block; font-size:12px; color:var(--ink-2); margin-bottom:4px; font-weight:600; }
+  .field{ margin-bottom:10px; }
+  input[type=text], input[type=number], input[type=date], select, textarea{
+    width:100%; font-family:inherit; font-size:14px; padding:9px 10px; border-radius:var(--radius-sm);
+    border:1px solid var(--border); background:var(--surface-2); color:var(--ink); direction:rtl;
+  }
+  input:focus, select:focus{ outline:2px solid var(--primary); outline-offset:1px; }
+  input[type=number], input[inputmode=decimal], input[type=date]{ direction:ltr; text-align:right; }
+  input[type=checkbox]{ width:20px; height:20px; accent-color:var(--primary); vertical-align:middle; }
+  .chk-wrap{ display:flex; align-items:center; justify-content:center; width:40px; height:40px; margin:-10px; flex:0 0 auto; cursor:pointer; }
+
+  button.btn{ font-family:inherit; font-weight:800; font-size:13.5px; border:none; cursor:pointer;
+    padding:10px 16px; border-radius:var(--radius-sm); transition:opacity .15s, transform .05s; }
+  button.btn:active{ transform:scale(.98); }
+  button.btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn-primary{ background:var(--primary); color:var(--primary-ink); }
+  .btn-ghost{ background:var(--surface-2); color:var(--ink); border:1px solid var(--border) !important; }
+  .btn-danger{ background:var(--critical-wash); color:var(--critical); }
+  .btn-sm{ padding:7px 12px; font-size:12.5px; }
+  .row-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+
+  .stat{ text-align:center; padding:14px 8px; border-radius:var(--radius-sm); background:var(--surface-2); }
+  .stat .v{ font-size:22px; font-weight:900; font-variant-numeric:tabular-nums; }
+  .stat .l{ font-size:11.5px; color:var(--ink-muted); margin-top:2px; }
+  .stat.good .v{ color:var(--good); }
+  .stat.bad .v{ color:var(--critical); }
+
+  .needs-item{ display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px dashed var(--grid); }
+  .needs-item:last-child{ border-bottom:none; }
+  .needs-item input[type=text]{ flex:1; }
+  .needs-item input[type=number], .needs-item input[inputmode=decimal]{ width:100px; }
+  .needs-item input::placeholder{ color:var(--ink-muted); opacity:0.65; }
+  .x{ background:none; border:none; color:var(--ink-muted); font-size:16px; cursor:pointer;
+    min-width:36px; min-height:36px; display:inline-flex; align-items:center; justify-content:center; padding:0; flex:0 0 auto; }
+
+  .alloc-row{ display:grid; grid-template-columns:20px 1fr 100px; gap:8px; align-items:center; padding:6px 0; }
+  .alloc-row .swatch{ width:12px; height:12px; border-radius:3px; background:var(--c); justify-self:center; }
+  .alloc-row .nm{ font-size:13.5px; font-weight:700; }
+  .alloc-person{ grid-column:2 / span 2; margin-top:-2px; }
+  .alloc-summary{ display:flex; justify-content:space-between; font-size:13px; margin-top:10px; padding-top:10px; border-top:1px solid var(--grid); }
+  .alloc-summary b{ font-variant-numeric:tabular-nums; }
+  .alloc-summary.over b{ color:var(--critical); }
+
+  table.log{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.log th{ text-align:right; color:var(--ink-muted); font-weight:700; padding:6px 6px; border-bottom:1px solid var(--grid); }
+  table.log td{ padding:7px 6px; border-bottom:1px solid var(--grid); font-variant-numeric:tabular-nums; }
+  table.log tr:last-child td{ border-bottom:none; }
+  .empty{ color:var(--ink-muted); font-size:13px; text-align:center; padding:16px 0; }
+
+  .badge{ display:inline-block; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; }
+  .badge.in{ background:var(--critical-wash); color:var(--critical); }
+  .badge.out{ background:#e6f6ee; color:var(--good); }
+  :root:not([data-theme="light"]) .badge.out{ background:#123526; }
+  :root[data-theme="dark"] .badge.out{ background:#123526; }
+
+  .person-card{ border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-bottom:8px; background:var(--surface-2); cursor:pointer; }
+  .person-card .ph{ display:flex; justify-content:space-between; align-items:center; }
+  .person-card .pname{ font-weight:800; font-size:14px; }
+  .person-card .pbal{ font-weight:900; font-variant-numeric:tabular-nums; }
+  .person-card .pmeta{ font-size:11.5px; color:var(--ink-muted); margin-top:2px; }
+  .person-detail{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--grid); }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:10px 16px; margin-top:12px; justify-content:center; }
+  .legend .li{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-2); }
+  .legend .sw{ width:10px; height:10px; border-radius:3px; }
+
+  .toast{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--page);
+    padding:10px 18px; border-radius:999px; font-size:13px; font-weight:700; z-index:100; opacity:0; pointer-events:none;
+    transition:opacity .2s, bottom .2s; }
+  .toast.show{ opacity:1; bottom:26px; }
+
+  .section-note{ font-size:11.5px; color:var(--ink-muted); background:var(--surface-2); border-radius:var(--radius-sm); padding:8px 10px; margin-bottom:10px; }
+
+  #login-gate{ max-width:360px; margin:64px auto; padding:26px 24px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+  #login-gate h2{ margin:0 0 4px; font-size:19px; }
+  #login-gate .sub{ color:var(--ink-muted); font-size:13px; margin:0 0 18px; line-height:1.6; }
+  #login-gate .field{ margin-bottom:12px; }
+  #login-gate label{ display:block; font-size:12.5px; color:var(--ink-2); margin-bottom:5px; font-weight:600; }
+  #login-gate input{ width:100%; padding:10px 12px; border:1px solid var(--grid); border-radius:var(--radius-sm); background:var(--page); color:var(--ink); font:inherit; }
+  #login-gate button{ width:100%; padding:11px; border:0; border-radius:var(--radius-sm); background:var(--primary); color:var(--primary-ink); font-weight:700; font-size:14.5px; cursor:pointer; margin-top:4px; }
+  #login-gate button:disabled{ opacity:.6; cursor:not-allowed; }
+  #login-gate .err{ color:var(--critical); font-size:12.5px; margin-top:10px; min-height:16px; }
+  #login-gate .hint{ font-size:11.5px; color:var(--ink-muted); margin-top:14px; line-height:1.7; border-top:1px dashed var(--grid); padding-top:12px; }
+  #app.is-hidden, #login-gate.is-hidden{ display:none; }
+  .logout-btn{ background:none; border:1px solid var(--border); color:var(--ink-muted); font-size:11.5px; border-radius:999px; padding:4px 10px; cursor:pointer; margin-inline-start:8px; }
+</style>
+
+<div id="login-gate" dir="rtl" class="is-hidden">
+  <h2>💰 صندوق المال</h2>
+  <p class="sub">سجّل دخولك بالإيميل وكلمة السر عشان توصل لبياناتك من أي جهاز (جوال أو لابتوب).</p>
+  <form id="login-form">
+    <div class="field">
+      <label for="login-email">الإيميل</label>
+      <input id="login-email" type="email" required autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="login-password">كلمة السر</label>
+      <input id="login-password" type="password" required autocomplete="current-password">
+    </div>
+    <button type="submit" id="login-submit">دخول</button>
+    <div class="err" id="login-error"></div>
+  </form>
+  <div class="hint">لازم يكون عندك مستخدم متسجّل مسبقًا بمشروع Firebase (Authentication &gt; Users) بنفس الإيميل وكلمة السر.</div>
+</div>
+
+<div id="app" dir="rtl" class="is-hidden">
+  <header class="top">
+    <h1>💰 صندوق المال</h1>
+    <div class="sub">دخلك يتوزع تلقائيًا على صناديقك — يعمل على كل أجهزتك · <span id="app-version">Firebase</span> <button class="logout-btn" id="logout-btn" type="button">خروج</button></div>
+    <div id="debug-line" style="font-size:11px;color:var(--ink-muted);margin-top:4px;min-height:14px;"></div>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="page"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  var firebaseConfig = {
+  "apiKey": "AIzaSyAfI3uQaRKpRRbEn-CmqZdWr6ndoC0fLqM",
+  "authDomain": "monay-app.firebaseapp.com",
+  "projectId": "monay-app",
+  "storageBucket": "monay-app.firebasestorage.app",
+  "messagingSenderId": "200489878499",
+  "appId": "1:200489878499:web:71bcd257131e11267516d6"
+};
+  var fbApp = initializeApp(firebaseConfig);
+  var fbAuth = getAuth(fbApp);
+  var fbDb = getFirestore(fbApp);
+
+  // Snapshot of what was in the Claude-hosted version at the moment this
+  // standalone copy was generated -- written once to Firestore, only if the
+  // document doesn't exist yet (i.e. only on this file's very first run),
+  // so the move to Firebase doesn't lose anything.
+  var SEED_STATE = {
+  "_seq": 0,
+  "debts": {
+    "iOwe": [],
+    "owedToMe": []
+  },
+  "distLog": [],
+  "fundConvert": {
+    "emergency": [],
+    "luxury": [],
+    "stocks": []
+  },
+  "fundTx": {
+    "emergency": [],
+    "luxury": [],
+    "otherGoals": [],
+    "stocks": []
+  },
+  "goldTransfers": [],
+  "goldTx": {
+    "buy": [],
+    "convert": [],
+    "sell": []
+  },
+  "income": [],
+  "needs": [
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-expense",
+      "name": "مصروف"
+    },
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-transport",
+      "name": "مواصلات"
+    },
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-3g",
+      "name": "3G"
+    },
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-haircut",
+      "name": "حلاقة"
+    },
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-club",
+      "name": "نادي"
+    },
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-easylife",
+      "name": "ايزي لايف"
+    },
+    {
+      "amount": 0,
+      "checked": true,
+      "id": "n-home",
+      "name": "الدار"
+    }
+  ],
+  "pending": null,
+  "stockTx": {
+    "buy": []
+  },
+  "subGoals": {
+    "luxury": [],
+    "otherGoals": []
+  }
+};
+
+  function wrapSnap(snap){
+    // Normalizes a real Firestore DocumentSnapshot (exists() and data() are
+    // METHODS) into the shape the app below already expects (exists as a
+    // boolean property, data as something snapData() can call either way).
+    return { exists: snap.exists(), data: function(){ return snap.data(); }, metadata: snap.metadata };
+  }
+
+  function makeDb(){
+    return {
+      doc: function(path){
+        var ref = doc(fbDb, path);
+        return {
+          get: async function(){
+            var snap = await getDoc(ref);
+            if(!snap.exists()){
+              var seeded = Object.assign({}, SEED_STATE, { updatedAt: Date.now() });
+              await setDoc(ref, seeded);
+              return { exists: true, data: function(){ return seeded; }, metadata: { hasPendingWrites:false } };
+            }
+            return wrapSnap(snap);
+          },
+          set: function(data){ return setDoc(ref, data); },
+          onSnapshot: function(cb){ return onSnapshot(ref, function(snap){ cb(wrapSnap(snap)); }); }
+        };
+      }
+    };
+  }
+
+  // The app code below (unchanged from the Claude-hosted version) talks to
+  // `window.claude.use("db")` -- so instead of touching any of that
+  // already-tested logic, we just answer that same call ourselves, backed by
+  // Firebase instead. `use("db")` doesn't resolve until a real signed-in user
+  // (email/password) is present, so the app's own `await` on it naturally
+  // waits for auth to be ready before it ever touches Firestore.
+  //
+  // Unlike the earlier anonymous-auth version, nobody is signed in
+  // automatically: a login gate (below) collects email + password and calls
+  // signInWithEmailAndPassword, so the app -- and the Firestore data behind
+  // it -- is only reachable by someone with those credentials, even if this
+  // page itself is hosted at a public URL.
+  var resolveReady, rejectReady;
+  var firebaseReady = new Promise(function(resolve, reject){ resolveReady = resolve; rejectReady = reject; });
+
+  var loginGate = document.getElementById("login-gate");
+  var appRoot = document.getElementById("app");
+  var loginForm = document.getElementById("login-form");
+  var loginEmail = document.getElementById("login-email");
+  var loginPassword = document.getElementById("login-password");
+  var loginError = document.getElementById("login-error");
+  var loginSubmit = document.getElementById("login-submit");
+  var logoutBtn = document.getElementById("logout-btn");
+
+  setPersistence(fbAuth, browserLocalPersistence).catch(function(err){ console.error("Firebase persistence setup failed", err); });
+
+  onAuthStateChanged(fbAuth, function(user){
+    if(user){
+      loginGate.classList.add("is-hidden");
+      appRoot.classList.remove("is-hidden");
+      resolveReady();
+    } else {
+      appRoot.classList.add("is-hidden");
+      loginGate.classList.remove("is-hidden");
+    }
+  });
+
+  var AUTH_ERROR_MESSAGES = {
+    "auth/invalid-email": "صيغة الإيميل مش صحيحة.",
+    "auth/user-not-found": "ما في حساب بهالإيميل. تأكد إنك ضفته من Firebase Console.",
+    "auth/wrong-password": "كلمة السر غلط.",
+    "auth/invalid-credential": "الإيميل أو كلمة السر غلط.",
+    "auth/too-many-requests": "محاولات كتير غلط -- جرب بعد شوي.",
+    "auth/network-request-failed": "صار خطأ بالاتصال بالإنترنت."
+  };
+
+  loginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    loginError.textContent = "";
+    loginSubmit.disabled = true;
+    loginSubmit.textContent = "جاري الدخول...";
+    signInWithEmailAndPassword(fbAuth, loginEmail.value.trim(), loginPassword.value)
+      .catch(function(err){
+        loginError.textContent = AUTH_ERROR_MESSAGES[err.code] || ("صار خطأ: " + (err.code || err.message));
+      })
+      .finally(function(){
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = "دخول";
+      });
+  });
+
+  logoutBtn.addEventListener("click", function(){
+    signOut(fbAuth);
+  });
+
+  window.claude = {
+    use: function(name){
+      if(name !== "db") return Promise.resolve(null);
+      return firebaseReady.then(function(){ return makeDb(); }, function(){ return null; });
+    }
+  };
+
+(function(){
+  "use strict";
+
+  // Temporary diagnostic: catch ANY uncaught exception (from a click handler,
+  // render, etc.) and surface it directly in the persistent debug line. We've
+  // seen clicks that visibly reach our own click-dispatch code (data-act is
+  // logged) but never produce a toast afterward — which can only mean the
+  // action function threw partway through, before reaching its toast() call.
+  // Without this, that exception is invisible (no devtools access to the
+  // user's phone) — this makes it show up in a screenshot instead.
+  window.addEventListener('error', function(e){
+    var d = document.getElementById('debug-line');
+    if(d) d.textContent = '⚠️ خطأ برمجي: ' + (e.message||'') + ' — ' + (e.filename||'').split('/').pop() + ':' + (e.lineno||'') + ':' + (e.colno||'');
+  });
+  window.addEventListener('unhandledrejection', function(e){
+    var d = document.getElementById('debug-line');
+    if(d) d.textContent = '⚠️ خطأ برمجي (promise): ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason));
+  });
+
+  // ---------- constants ----------
+  var CATS = {
+    emergency:  { name:"صندوق الطوارئ",       icon:"🛟", varc:"--cat-emergency" },
+    otherGoals: { name:"أهداف أخرى",          icon:"🎯", varc:"--cat-goals" },
+    stocks:     { name:"أسهم",                icon:"📈", varc:"--cat-stocks" },
+    gold:       { name:"ذهب",                 icon:"🪙", varc:"--cat-gold" },
+    luxury:     { name:"صندوق الرفاهية",       icon:"✨", varc:"--cat-luxury" },
+    owedToMe:   { name:"دين لي (مستحق لي)",    icon:"🤝", varc:"--cat-owed" },
+    iOwe:       { name:"سداد دين علي",         icon:"💳", varc:"--cat-iowe" }
+  };
+  var CAT_ORDER = ["emergency","otherGoals","stocks","gold","luxury","owedToMe","iOwe"];
+  // Distribution step (step 3) only offers these — "دين لي" (owedToMe) stays
+  // out of it by request: lending money is recorded via the "سداد دين لي"
+  // field in the income step instead, not by allocating part of a
+  // distribution straight into a new loan. It keeps its own tab/page and
+  // still shows up in the asset totals — this only removes it as a
+  // distribution target.
+  var DIST_CAT_ORDER = CAT_ORDER.filter(function(k){ return k!=="owedToMe"; });
+  var SIMPLE_FUNDS = ["emergency","luxury","stocks","otherGoals"];
+  var GOAL_KEYS = ["otherGoals","luxury"];
+  var USD_FUNDS = ["emergency","stocks","luxury"];
+  var PAGES = [{key:"home", name:"الرئيسية", icon:"🏠"}].concat(
+    CAT_ORDER.map(function(k){ return {key:k, name:CATS[k].name, icon:CATS[k].icon}; })
+  );
+
+  // ---------- helpers ----------
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $all(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+  function nextSeq(){ state._seq = (state._seq||0) + 1; return state._seq; }
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  // Arabic-Indic (٠-٩) and Extended Arabic-Indic/Persian (۰-۹) digits, and Arabic
+  // decimal/thousands separators, don't parse with parseFloat — normalize them to
+  // plain Western digits first. Needed because amount fields are type="text" (see
+  // note above num()'s callers) so whatever a phone's Arabic keyboard produces
+  // lands in the field as-is instead of being silently rejected/cleared.
+  function toWesternDigits(s){
+    return String(s==null?"":s).replace(/[٠-٩۰-۹]/g, function(ch){
+      var code = ch.charCodeAt(0);
+      return String(code >= 0x06F0 ? code - 0x06F0 : code - 0x0660);
+    }).replace(/[٫٬]/g, ".");
+  }
+  function num(v){ var n = parseFloat(toWesternDigits(v)); return isFinite(n) ? n : 0; }
+  function fmt(n, unit){
+    n = num(n);
+    var s = Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:2});
+    return (n<0 ? "-" : "") + s + (unit ? " " + unit : "");
+  }
+  var AR_MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+  function fmtDate(d){
+    if(!d) return "";
+    try{
+      var dt = new Date(d+"T00:00:00");
+      return dt.getDate() + " " + AR_MONTHS[dt.getMonth()] + " " + dt.getFullYear();
+    }catch(e){ return d; }
+  }
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  // Every historical log/record table in the app (fund transactions, gold
+  // buy/sell, debt entries, conversions...) goes through this so "show a
+  // little, expand for the rest" behaves the SAME everywhere, and so no
+  // section of the page keeps growing forever as more operations pile up.
+  // Expand/collapse state lives in ui.expandedLogs — pure display state,
+  // never written to Firestore and never touching state.* — so toggling it
+  // can never lose or change a single stored number; it only changes how
+  // much of what's already there is shown at once. `id` must be unique per
+  // log instance on the page (e.g. "fundtx-emergency", or
+  // "debtentries-owedToMe-"+p.id for a specific person).
+  var LOG_COLLAPSE_LIMIT = 4;
+  function logView(id, rows){
+    var expanded = !!ui.expandedLogs[id];
+    var shown = expanded ? rows : rows.slice(0, LOG_COLLAPSE_LIMIT);
+    var toggle = rows.length > LOG_COLLAPSE_LIMIT
+      ? '<div class="row-actions" style="margin-top:8px;"><button class="btn btn-ghost btn-sm" data-act="log-toggle" data-log="'+id+'">' +
+          (expanded ? "▲ إخفاء" : "▼ عرض الكل ("+rows.length+")") + '</button></div>'
+      : '';
+    return { rows: shown, toggle: toggle };
+  }
+  function toast(msg){
+    var t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast._h); toast._h = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+    // Also written to a persistent (non-fading) line in the header, temporarily,
+    // so the last result of any button press stays visible in a screenshot even
+    // if it's looked at well after the 2.2s toast has faded.
+    var d = document.getElementById("debug-line");
+    if(d) d.textContent = "آخر رسالة: " + msg;
+  }
+
+  // ---------- state ----------
+  var state = null;
+  var db = null, docRef = null;
+  var ui = { page: "home", openPerson: {}, expandedLogs: {} };
+
+  // Reminder amounts shown as a light placeholder hint inside an empty needs
+  // amount field — not a real stored value, just a nudge for how much that
+  // item usually costs. The user still has to type the real number in.
+  var NEEDS_REMINDERS = {
+    "مصروف": 800,
+    "مواصلات": 350,
+    "3G": 50,
+    "حلاقة": 80,
+    "نادي": 150,
+    "ايزي لايف": 500,
+    "الدار": 300
+  };
+
+  function defaultState(){
+    return {
+      _seq: 0,
+      updatedAt: Date.now(),
+      income: [],
+      needs: [
+        {id:uid(), name:"مصروف", amount:0, checked:true},
+        {id:uid(), name:"مواصلات", amount:0, checked:true},
+        {id:uid(), name:"3G", amount:0, checked:true},
+        {id:uid(), name:"حلاقة", amount:0, checked:true},
+        {id:uid(), name:"نادي", amount:0, checked:true},
+        {id:uid(), name:"ايزي لايف", amount:0, checked:true},
+        {id:uid(), name:"الدار", amount:0, checked:true}
+      ],
+      pending: null,
+      distLog: [],
+      fundTx: { emergency:[], luxury:[], stocks:[], otherGoals:[] },
+      fundConvert: { emergency:[], stocks:[], luxury:[] },
+      goldTransfers: [],
+      subGoals: { otherGoals:[], luxury:[] },
+      goldTx: { convert:[], buy:[], sell:[] },
+      debts: { owedToMe:[], iOwe:[] },
+      stockTx: { buy:[] }
+    };
+  }
+
+  // One-time best-effort migration: the gold "sell" form used to be aggregate
+  // (type+karat+weight netting); it is now lot-based (a sell references the
+  // exact buy it closes via boughtId). For any OLD sell entry recorded before
+  // this change (no boughtId yet), try to match it to an unsold buy with the
+  // same type/karat/weight so historical holdings still net out correctly.
+  function migrateGoldLots(d){
+    var buys = d.goldTx.buy.slice().sort(function(a,b){ return (a.seq||0)-(b.seq||0); });
+    var used = {};
+    d.goldTx.sell.forEach(function(s){
+      if(s.boughtId){ used[s.boughtId] = true; return; }
+      var match = buys.filter(function(b){
+        return !used[b.id] && b.type===s.type && b.karat===s.karat && b.weight===s.weight;
+      })[0];
+      if(match){ s.boughtId = match.id; used[match.id] = true; }
+    });
+  }
+
+  function migrate(data){
+    var d = defaultState();
+    if(!data || typeof data !== "object") return d;
+    // The db capability's snapshot data can come back non-extensible (frozen/
+    // sealed) — it's a read-only view of the stored doc, not meant to be
+    // mutated in place. Everything below assigns pieces of `data` straight
+    // into our live `state` (e.g. d.income = data.income), so without this
+    // clone, the FIRST time app code does state.income.push(...) (or any
+    // other array from a snapshot), it throws "Cannot add property N, object
+    // is not extensible" — silently, since it happens deep inside an action
+    // function after persist()/render() but before that function's own
+    // toast() call. A plain JSON round-trip gives us a fresh, fully mutable,
+    // plain-object copy, completely decoupled from whatever the platform
+    // handed us.
+    try{ data = JSON.parse(JSON.stringify(data)); }catch(e){ /* fall through with original data if it somehow isn't serializable */ }
+    d._seq = data._seq || 0;
+    d.income = Array.isArray(data.income) ? data.income : [];
+    d.needs = Array.isArray(data.needs) && data.needs.length ? data.needs : d.needs;
+    d.pending = data.pending || null;
+    d.distLog = Array.isArray(data.distLog) ? data.distLog : [];
+    d.fundTx = data.fundTx || d.fundTx;
+    SIMPLE_FUNDS.forEach(function(k){ if(!Array.isArray(d.fundTx[k])) d.fundTx[k] = []; });
+    d.fundConvert = data.fundConvert || d.fundConvert;
+    ["emergency","stocks","luxury"].forEach(function(k){ if(!Array.isArray(d.fundConvert[k])) d.fundConvert[k] = []; });
+    d.goldTransfers = Array.isArray(data.goldTransfers) ? data.goldTransfers : [];
+    d.subGoals = data.subGoals || d.subGoals;
+    GOAL_KEYS.forEach(function(k){
+      if(!Array.isArray(d.subGoals[k])) d.subGoals[k] = [];
+      d.subGoals[k].forEach(function(g){ if(!Array.isArray(g.convert)) g.convert = []; });
+    });
+    d.goldTx = data.goldTx || d.goldTx;
+    ["convert","buy","sell"].forEach(function(k){ if(!Array.isArray(d.goldTx[k])) d.goldTx[k] = []; });
+    d.debts = data.debts || d.debts;
+    ["owedToMe","iOwe"].forEach(function(k){ if(!Array.isArray(d.debts[k])) d.debts[k] = []; });
+    d.stockTx = data.stockTx || d.stockTx;
+    if(!Array.isArray(d.stockTx.buy)) d.stockTx.buy = [];
+    migrateGoldLots(d);
+    return d;
+  }
+
+  // Temporary diagnostic counters — not app data, just for hunting the
+  // "state.pending goes missing" bug via the debug-line. Safe to remove once
+  // that's solved.
+  var __diag = { renders:0, boots:0, snapApplied:0, snapSkippedPW:0, snapSkippedStale:0, lastSnapHadPending:null, lastGetHadPending:null };
+  var writeChain = Promise.resolve();
+  var lastWrittenAt = 0;
+  function saveToDb(){
+    if(!docRef) return;
+    state.updatedAt = Date.now();
+    lastWrittenAt = state.updatedAt;
+    var snapshot = JSON.parse(JSON.stringify(state));
+    writeChain = writeChain.then(function(){ return docRef.set(snapshot); }).catch(function(e){ console.error("save failed", e); });
+  }
+  function persist(){
+    render();
+    saveToDb();
+  }
+  // Saves without rebuilding the DOM — used for in-place text/number edits (like
+  // renaming or repricing a needs item) so the user's cursor/focus is never lost
+  // mid-typing by a full re-render triggered from an unrelated field's blur.
+  function persistSilent(){
+    saveToDb();
+  }
+
+  // ---------- derived getters ----------
+  function fundRawILS(key){
+    var tx = (state.fundTx[key]||[]).reduce(function(s,t){ return s + (t.type==="withdraw" ? -t.amount : t.amount); }, 0);
+    var transferredOut = state.goldTransfers.filter(function(g){ return g.fromFund===key; }).reduce(function(s,g){ return s+g.amount; }, 0);
+    var convertedOut = (state.fundConvert[key]||[]).reduce(function(s,c){ return s+c.amountILS; }, 0);
+    return tx - transferredOut - convertedOut;
+  }
+  // Finds the original buy lot a sell entry closed, if any.
+  function lotForSell(sellEntry){
+    return state.goldTx.buy.filter(function(b){ return b.id===sellEntry.boughtId; })[0];
+  }
+  function fundUSD(key){
+    var fromConvert = (state.fundConvert[key]||[]).reduce(function(s,c){ return s+c.usd; }, 0);
+    var boughtFromFund = state.goldTx.buy.filter(function(b){ return b.fundedBy===key; }).reduce(function(s,b){ return s+b.priceUSD; }, 0);
+    var soldFromFund = state.goldTx.sell.filter(function(s){ var lot = lotForSell(s); return lot && lot.fundedBy===key; }).reduce(function(s,e){ return s+e.priceUSD; }, 0);
+    var stockSpent = key==="stocks" ? state.stockTx.buy.reduce(function(s,t){ return s+t.amount; }, 0) : 0;
+    return fromConvert - boughtFromFund + soldFromFund - stockSpent;
+  }
+  function goalSaved(goal){
+    return goal.entries.reduce(function(s,e){ return s + (e.type==="withdraw" ? -e.amount : e.amount); }, 0);
+  }
+  function goalConvertedOutILS(goal){
+    return (goal.convert||[]).reduce(function(s,c){ return s+c.amountILS; }, 0);
+  }
+  // How much of a goal's saved money is still sitting as ₪ (not yet converted to $).
+  function goalAvailableILS(goal){
+    return goalSaved(goal) - goalConvertedOutILS(goal);
+  }
+  // This goal's own $ balance: what it converted, minus gold bought against it.
+  function goalUSD(goal){
+    var fromConvert = (goal.convert||[]).reduce(function(s,c){ return s+c.usd; }, 0);
+    var bought = state.goldTx.buy.filter(function(b){ return b.fundedByGoal===goal.id; }).reduce(function(s,b){ return s+b.priceUSD; }, 0);
+    var sold = state.goldTx.sell.filter(function(s){ var lot = lotForSell(s); return lot && lot.fundedByGoal===goal.id; }).reduce(function(s,e){ return s+e.priceUSD; }, 0);
+    return fromConvert - bought + sold;
+  }
+  function goalsConvertedOutTotal(key){
+    return (state.subGoals[key]||[]).reduce(function(s,g){ return s+goalConvertedOutILS(g); }, 0);
+  }
+  function subGoalsTotal(key){
+    return (state.subGoals[key]||[]).reduce(function(s,g){ return s+goalSaved(g); }, 0);
+  }
+  function fundPool(key){
+    return fundRawILS(key) - subGoalsTotal(key);
+  }
+  // The ₪-denominated slice of a fund's total value (excludes money already
+  // converted to $, whether that happened at fund level (legacy) or per-goal).
+  function fundAssetILS(key){
+    if(GOAL_KEYS.indexOf(key)>=0) return fundRawILS(key) - goalsConvertedOutTotal(key);
+    return fundRawILS(key);
+  }
+  // Total $ available to a fund for display/asset purposes: for goal-funds this
+  // is the sum of every goal's own $ balance, plus any legacy fund-level $
+  // balance from before per-goal conversion existed.
+  function fundUSDDisplay(key){
+    if(GOAL_KEYS.indexOf(key)>=0){
+      var goalsSum = (state.subGoals[key]||[]).reduce(function(s,g){ return s+goalUSD(g); }, 0);
+      var legacy = USD_FUNDS.indexOf(key)>=0 ? fundUSD(key) : 0;
+      return goalsSum + legacy;
+    }
+    return fundUSD(key);
+  }
+  function goldILSBalance(){
+    var fromDist = state.distLog.filter(function(e){ return e.category==="gold"; }).reduce(function(s,e){ return s+e.amount; }, 0);
+    var fromTransfers = state.goldTransfers.reduce(function(s,g){ return s+g.amount; }, 0);
+    var converted = state.goldTx.convert.reduce(function(s,e){ return s+e.amountILS; }, 0);
+    return fromDist + fromTransfers - converted;
+  }
+  // The central gold pool only gets sale proceeds back for gold IT funded —
+  // gold bought via a specific fund/goal's own $ credits that fund/goal instead
+  // (see fundUSD/goalUSD above), so money never gets double-counted.
+  function goldUSDBalance(){
+    var fromConvert = state.goldTx.convert.reduce(function(s,e){ return s+e.usd; }, 0);
+    var bought = state.goldTx.buy.filter(function(b){ return !b.fundedBy && !b.fundedByGoal; }).reduce(function(s,e){ return s+e.priceUSD; }, 0);
+    var sold = state.goldTx.sell.filter(function(s){ var lot = lotForSell(s); return !lot || (!lot.fundedBy && !lot.fundedByGoal); }).reduce(function(s,e){ return s+e.priceUSD; }, 0);
+    return fromConvert - bought + sold;
+  }
+  // Gold lots not yet referenced by any sell — these are what's actually held.
+  function unsoldBuys(){
+    var sold = {};
+    state.goldTx.sell.forEach(function(s){ if(s.boughtId) sold[s.boughtId] = true; });
+    return state.goldTx.buy.filter(function(b){ return !sold[b.id]; });
+  }
+  // Aggregated summary (weight + avg $/₪ per type) of a set of held lots.
+  // Defaults to everything unsold; pass a filtered list to scope it (e.g. to
+  // one fund's own gold).
+  function goldHoldingsSummary(lots){
+    lots = lots || unsoldBuys();
+    var map = {};
+    lots.forEach(function(b){
+      if(!map[b.type]) map[b.type] = {type:b.type, weight:0, count:0, usdTotal:0, ilsTotal:0, ilsCount:0};
+      var m = map[b.type];
+      m.weight += num(b.weight); m.count++; m.usdTotal += num(b.priceUSD);
+      if(b.priceILS){ m.ilsTotal += num(b.priceILS); m.ilsCount++; }
+    });
+    return Object.keys(map).map(function(k){
+      var m = map[k];
+      return { type:m.type, weight:m.weight, count:m.count,
+        avgUSD: m.count ? m.usdTotal/m.count : 0,
+        avgILS: m.ilsCount ? m.ilsTotal/m.ilsCount : 0,
+        usdTotal:m.usdTotal, ilsTotal:m.ilsTotal };
+    });
+  }
+  // Renders a "holdings summary" card (weight + avg $/₪ per type + grand total)
+  // for a given set of lots. Used both by the Gold page (all holdings) and by
+  // fund pages that buy their own gold directly (scoped to that fund's lots).
+  function goldSummaryCard(lots, title){
+    var summary = goldHoldingsSummary(lots);
+    var grandWeight = summary.reduce(function(s,m){ return s+m.weight; }, 0);
+    var grandUSD = summary.reduce(function(s,m){ return s+m.usdTotal; }, 0);
+    var grandILS = summary.reduce(function(s,m){ return s+m.ilsTotal; }, 0);
+    return '<div class="card"><h2><span class="ic">📦</span> '+title+'</h2>' +
+      (summary.length ? '<table class="log"><tr><th>النوع</th><th>الوزن</th><th>العدد</th><th>متوسط $</th><th>متوسط ₪</th></tr>' +
+        summary.map(function(m){ return '<tr><td>'+esc(m.type)+'</td><td>'+fmt(m.weight)+'</td><td>'+m.count+'</td><td>'+fmt(m.avgUSD)+'</td><td>'+(m.ilsCount?fmt(m.avgILS):"—")+'</td></tr>'; }).join("") +
+        '<tr><td style="font-weight:800;">الإجمالي (كل الأنواع كمصاري)</td><td style="font-weight:800;">'+fmt(grandWeight)+'</td><td></td><td style="font-weight:800;">'+fmt(grandUSD,"$")+'</td><td style="font-weight:800;">'+(grandILS?fmt(grandILS,"₪"):"—")+'</td></tr>' +
+        '</table>' : '<div class="empty">لا يوجد ذهب حالياً</div>') + '</div>';
+  }
+  // Debt entries can each be recorded in their own currency (a loan handed
+  // over in cash dollars vs. one in dinars vs. the app's own ₪ flow) — so
+  // balances/totals for debts are kept PER CURRENCY (an object like
+  // {"دولار":500,"دينار":200}), never summed across currencies into one
+  // number, since 1 دولار isn't 1 دينار and the app has no exchange rate
+  // between them. Legacy entries recorded before this feature existed have
+  // no .currency field — they default to "شيكل" (₪), which is what they
+  // actually were: plain app-currency amounts.
+  var DEBT_CURRENCIES = ["دولار","دينار","شيكل"];
+  function entryCurrency(e){ return e.currency || "شيكل"; }
+  function personBalance(p){
+    return p.entries.reduce(function(s,e){ return s + (e.type==="repay" ? -e.amount : e.amount); }, 0);
+  }
+  function personBalanceByCurrency(p){
+    var out = {};
+    p.entries.forEach(function(e){
+      var cur = entryCurrency(e);
+      var delta = e.type==="repay" ? -e.amount : e.amount;
+      out[cur] = (out[cur]||0) + delta;
+    });
+    return out;
+  }
+  function addCurrencyMaps(a, b){
+    var out = {};
+    Object.keys(a).forEach(function(k){ out[k] = (out[k]||0) + a[k]; });
+    Object.keys(b).forEach(function(k){ out[k] = (out[k]||0) + b[k]; });
+    return out;
+  }
+  // Renders a per-currency amount map as e.g. "500 دولار، 200 دينار" —
+  // dropping zero/near-zero entries; "0" when nothing's left outstanding.
+  function fmtByCurrency(map, opts){
+    opts = opts || {};
+    var parts = DEBT_CURRENCIES.concat(Object.keys(map).filter(function(k){ return DEBT_CURRENCIES.indexOf(k)===-1; }))
+      .filter(function(k){ return Math.abs(map[k]||0) > 0.005; })
+      .map(function(k){ return fmt(opts.abs ? Math.abs(map[k]) : map[k]) + " " + k; });
+    return parts.length ? parts.join(opts.sep || "، ") : "0";
+  }
+  function debtTotal(listKey){
+    return (state.debts[listKey]||[]).reduce(function(s,p){ return s + personBalance(p); }, 0);
+  }
+  function debtTotalByCurrency(listKey){
+    return (state.debts[listKey]||[]).reduce(function(s,p){ return addCurrencyMaps(s, personBalanceByCurrency(p)); }, {});
+  }
+  // Gross total ever lent out historically (not net of repayments) — separate
+  // from debtTotal() which is the current net-outstanding balance.
+  function debtGrossLent(listKey){
+    return (state.debts[listKey]||[]).reduce(function(s,p){
+      return s + p.entries.filter(function(e){ return e.type==="lend"; }).reduce(function(s2,e){ return s2+e.amount; }, 0);
+    }, 0);
+  }
+  function debtGrossLentByCurrency(listKey){
+    return (state.debts[listKey]||[]).reduce(function(s,p){
+      var m = {};
+      p.entries.filter(function(e){ return e.type==="lend"; }).forEach(function(e){
+        var cur = entryCurrency(e);
+        m[cur] = (m[cur]||0) + e.amount;
+      });
+      return addCurrencyMaps(s, m);
+    }, {});
+  }
+  function findPerson(listKey, name){
+    name = (name||"").trim();
+    return (state.debts[listKey]||[]).filter(function(p){ return p.name === name; })[0];
+  }
+  function findOrCreatePerson(listKey, name){
+    name = (name||"").trim();
+    var p = findPerson(listKey, name);
+    if(!p){ p = {id:uid(), name:name, entries:[]}; state.debts[listKey].push(p); }
+    return p;
+  }
+
+  // ---------- income / distribution actions ----------
+  function addIncome(){
+    var date = $("#inc-date").value || todayStr();
+    var source = $("#inc-source").value.trim();
+    var amount = num($("#inc-amount").value);
+    var currency = $("#inc-currency").value;
+    var repayPerson = ($("#inc-repay-person") ? $("#inc-repay-person").value.trim() : "");
+    if(amount <= 0){ toast("أدخل مبلغًا صحيحًا"); return; }
+    var needsTotal = state.needs.filter(function(n){ return n.checked; }).reduce(function(s,n){ return s+num(n.amount); }, 0);
+    var remaining = amount - needsTotal;
+    var incEntry = {id:uid(), seq:nextSeq(), date:date, source:source||"—", amount:amount, currency:currency, needsDeducted:needsTotal};
+    if(repayPerson){
+      var per = findOrCreatePerson("owedToMe", repayPerson);
+      // This repayment is literally the income amount that was just entered,
+      // so it carries the SAME currency the person picked for that income
+      // (شيكل/دولار) — no separate currency UI needed here.
+      var repayEntry = {id:uid(), seq:nextSeq(), date:date, amount:amount, type:"repay", note:"سداد ضمن إضافة دخل", currency:currency};
+      per.entries.push(repayEntry);
+      incEntry.repayPerson = repayPerson;
+      incEntry.repayEntryId = repayEntry.id;
+    }
+    state.income.push(incEntry);
+    clearField("inc-source"); clearField("inc-amount");
+    if($("#inc-repay-person")) clearField("inc-repay-person");
+    // If there's already an undistributed amount sitting from a previous income
+    // entry, add this one on top of it instead of overwriting it — nothing
+    // should get lost until the user actually sends a distribution.
+    if(state.pending){
+      state.pending.incomeAmount += amount;
+      state.pending.needsTotal += needsTotal;
+      state.pending.remaining += remaining;
+    } else {
+      var alloc = {}; DIST_CAT_ORDER.forEach(function(k){ alloc[k]=0; });
+      state.pending = { incomeAmount:amount, needsTotal:needsTotal, remaining:remaining, alloc:alloc, owedToMePerson:"", iOwePerson:"" };
+    }
+    persist();
+    toast(repayPerson ? "تمت الإضافة وتسجيل السداد من "+repayPerson+" — المتبقي الآن "+fmt(state.pending.remaining,"₪")+" جاهز للتوزيع تحت"
+                       : "تمت إضافة الدخل — المتبقي الآن "+fmt(state.pending.remaining,"₪")+" جاهز للتوزيع تحت");
+  }
+  function undoIncome(){
+    if(!state.income.length) return;
+    var last = state.income.pop();
+    if(last.repayPerson && last.repayEntryId){
+      var per = findPerson("owedToMe", last.repayPerson);
+      if(per) per.entries = per.entries.filter(function(e){ return e.id!==last.repayEntryId; });
+    }
+    // Only unwind this entry's own contribution to the undistributed pool —
+    // an earlier income entry that hasn't been distributed yet should stay.
+    if(state.pending){
+      var deducted = last.needsDeducted||0;
+      state.pending.incomeAmount -= last.amount;
+      state.pending.needsTotal -= deducted;
+      state.pending.remaining -= (last.amount - deducted);
+      if(state.pending.incomeAmount <= 0.01 && state.pending.needsTotal <= 0.01 && Math.abs(state.pending.remaining) <= 0.01){
+        state.pending = null;
+      }
+    }
+    persist();
+  }
+  function updateNeed(id, field, val){
+    var n = state.needs.filter(function(x){ return x.id===id; })[0];
+    if(!n) return;
+    if(field==="checked") n.checked = val; else if(field==="amount") n.amount = num(val); else n.name = val;
+    persistSilent();
+    refreshNeedsTotalDisplay();
+  }
+  function refreshNeedsTotalDisplay(){
+    var el = $("#needs-total-val");
+    if(!el) return;
+    var total = state.needs.filter(function(n){ return n.checked; }).reduce(function(s,n){ return s+num(n.amount); }, 0);
+    el.textContent = fmt(total,"₪");
+  }
+  function addNeedItem(){
+    state.needs.push({id:uid(), name:"بند جديد", amount:0, checked:true});
+    persist();
+  }
+  function removeNeedItem(id){
+    state.needs = state.needs.filter(function(n){ return n.id!==id; });
+    persist();
+  }
+  function sendDistribution(){
+    var p = state.pending; if(!p) return;
+    var alloc = {};
+    DIST_CAT_ORDER.forEach(function(k){ alloc[k] = num($("#alloc-"+k) ? $("#alloc-"+k).value : 0); });
+    var total = DIST_CAT_ORDER.reduce(function(s,k){ return s+alloc[k]; }, 0);
+    if(total <= 0){ toast("وزّع مبلغًا أولاً"); return; }
+    if(total > p.remaining + 0.01){ toast("مجموع التوزيع أكبر من المتبقي"); return; }
+    var iOwePerson = ($("#alloc-person-iOwe") ? $("#alloc-person-iOwe").value.trim() : "");
+    if(alloc.iOwe > 0 && !iOwePerson){ toast("اكتب اسم الشخص لخانة ⁦سداد دين علي⁩"); return; }
+    var sendId = uid(), date = todayStr();
+    DIST_CAT_ORDER.forEach(function(key){
+      var val = alloc[key]; if(val<=0) return;
+      state.distLog.push({id:uid(), seq:nextSeq(), sendId:sendId, date:date, category:key, amount:val,
+        person: key==="iOwe" ? iOwePerson : undefined});
+      if(key==="gold"){ /* balance derived from distLog */ }
+      else if(key==="iOwe"){
+        var per = findOrCreatePerson("iOwe", iOwePerson);
+        // Money allocated here comes straight out of the ₪ distribution pool,
+        // so this repayment is recorded in شيكل regardless of what currency
+        // this person's other debt entries happen to be in.
+        per.entries.push({id:uid(), seq:nextSeq(), sendId:sendId, date:date, amount:val, type:"repay", note:"سداد من الصفحة الرئيسية", currency:"شيكل"});
+      } else {
+        state.fundTx[key].push({id:uid(), seq:nextSeq(), sendId:sendId, date:date, amount:val, type:"deposit", note:"من الصفحة الرئيسية"});
+      }
+    });
+    // Only clear the pending distribution once its whole remaining balance
+    // has actually been sent somewhere. This used to null state.pending
+    // unconditionally right here — so a PARTIAL distribution (total less
+    // than p.remaining) silently discarded whatever wasn't allocated this
+    // round: not credited to any fund, not shown anywhere, just gone. Now
+    // the leftover stays pending so "الخطوة ٣" keeps showing it and it can
+    // be distributed later (in one or more further rounds) instead of
+    // vanishing.
+    p.remaining -= total;
+    if(p.remaining <= 0.01){
+      state.pending = null;
+      persist();
+      toast("تم التوزيع");
+    } else {
+      p.iOwePerson = "";
+      persist();
+      toast("تم توزيع "+fmt(total,"₪")+" — تبقى "+fmt(p.remaining,"₪")+" لسا محتاج توزيع تحت");
+    }
+  }
+  function undoSend(){
+    if(!state.distLog.length) return;
+    var last = state.distLog[state.distLog.length-1];
+    var sendId = last.sendId;
+    var entries = state.distLog.filter(function(e){ return e.sendId===sendId; });
+    state.distLog = state.distLog.filter(function(e){ return e.sendId!==sendId; });
+    SIMPLE_FUNDS.forEach(function(k){ state.fundTx[k] = state.fundTx[k].filter(function(e){ return e.sendId!==sendId; }); });
+    ["owedToMe","iOwe"].forEach(function(listKey){
+      state.debts[listKey].forEach(function(p){ p.entries = p.entries.filter(function(e){ return e.sendId!==sendId; }); });
+    });
+    var alloc = {}; CAT_ORDER.forEach(function(k){ alloc[k]=0; });
+    var owedToMePerson = "", iOwePerson = "";
+    entries.forEach(function(e){
+      alloc[e.category] = e.amount;
+      if(e.category==="owedToMe") owedToMePerson = e.person||"";
+      if(e.category==="iOwe") iOwePerson = e.person||"";
+    });
+    var remaining = entries.reduce(function(s,e){ return s+e.amount; }, 0);
+    state.pending = {incomeAmount:remaining, needsTotal:0, remaining:remaining, alloc:alloc, owedToMePerson:owedToMePerson, iOwePerson:iOwePerson};
+    persist();
+  }
+
+  // ---------- simple fund actions ----------
+  function fundTransact(key, type){
+    var amount = num($("#fund-amount-"+key).value);
+    var note = $("#fund-note-"+key) ? $("#fund-note-"+key).value.trim() : "";
+    if(amount<=0){ toast("أدخل مبلغًا صحيحًا"); return; }
+    if(type==="withdraw" && amount > fundPool(key) + 0.01){ toast("الرصيد غير المخصص غير كافٍ"); return; }
+    state.fundTx[key].push({id:uid(), seq:nextSeq(), date:todayStr(), amount:amount, type:type, note:note});
+    clearField("fund-amount-"+key);
+    if($("#fund-note-"+key)) clearField("fund-note-"+key);
+    persist();
+  }
+  function undoFundLast(key){
+    var log = state.fundTx[key]; if(!log.length) return;
+    log.pop(); persist();
+  }
+  function fundConvertToUSD(key){
+    var amountILS = num($("#fundconv-amount-"+key).value);
+    var rate = num($("#fundconv-rate-"+key).value);
+    if(amountILS<=0 || rate<=0){ toast("أدخل مبلغًا وسعر صرف صحيحين"); return; }
+    if(amountILS > fundPool(key) + 0.01){ toast("الرصيد غير المخصص غير كافٍ"); return; }
+    var usd = amountILS / rate;
+    state.fundConvert[key].push({id:uid(), seq:nextSeq(), date:todayStr(), amountILS:amountILS, rate:rate, usd:usd});
+    clearField("fundconv-amount-"+key); clearField("fundconv-rate-"+key);
+    persist();
+  }
+  function undoFundConvert(key){
+    var log = state.fundConvert[key]; if(!log || !log.length) return;
+    log.pop(); persist();
+  }
+  // ---------- sub-goal actions (otherGoals / luxury) ----------
+  function addSubGoal(key){
+    var name = $("#goal-name-"+key).value.trim();
+    var target = num($("#goal-target-"+key).value);
+    if(!name){ toast("اكتب اسم الهدف"); return; }
+    state.subGoals[key].push({id:uid(), seq:nextSeq(), name:name, target:target, entries:[], convert:[]});
+    clearField("goal-name-"+key); clearField("goal-target-"+key);
+    persist();
+  }
+  function removeGoal(key, goalId){
+    state.subGoals[key] = state.subGoals[key].filter(function(g){ return g.id!==goalId; });
+    persist();
+  }
+  function goalTransact(key, goalId, type){
+    var goal = state.subGoals[key].filter(function(g){ return g.id===goalId; })[0]; if(!goal) return;
+    var input = $("#goalamt-"+goalId);
+    var amount = num(input ? input.value : 0);
+    if(amount<=0){ toast("أدخل مبلغًا صحيحًا"); return; }
+    if(type==="deposit" && amount > fundPool(key) + 0.01){ toast("الرصيد غير المخصص بالصندوق غير كافٍ"); return; }
+    if(type==="withdraw" && amount > goalAvailableILS(goal) + 0.01){ toast("رصيد الهدف المتاح بالشيكل غير كافٍ (جزء منه محوّل لدولار)"); return; }
+    goal.entries.push({id:uid(), seq:nextSeq(), date:todayStr(), amount:amount, type:type});
+    clearField("goalamt-"+goalId);
+    persist();
+  }
+  function undoGoalLast(key, goalId){
+    var goal = state.subGoals[key].filter(function(g){ return g.id===goalId; })[0];
+    if(!goal || !goal.entries.length) return;
+    goal.entries.pop(); persist();
+  }
+  function goalConvertToUSD(key, goalId){
+    var goal = state.subGoals[key].filter(function(g){ return g.id===goalId; })[0]; if(!goal) return;
+    var amountILS = num($("#goalconv-amount-"+goalId).value);
+    var rate = num($("#goalconv-rate-"+goalId).value);
+    if(amountILS<=0 || rate<=0){ toast("أدخل مبلغًا وسعر صرف صحيحين"); return; }
+    if(amountILS > goalAvailableILS(goal) + 0.01){ toast("رصيد الهدف بالشيكل غير كافٍ"); return; }
+    goal.convert = goal.convert || [];
+    goal.convert.push({id:uid(), seq:nextSeq(), date:todayStr(), amountILS:amountILS, rate:rate, usd:amountILS/rate});
+    clearField("goalconv-amount-"+goalId); clearField("goalconv-rate-"+goalId);
+    persist();
+  }
+  function undoGoalConvert(key, goalId){
+    var goal = state.subGoals[key].filter(function(g){ return g.id===goalId; })[0];
+    if(!goal || !goal.convert || !goal.convert.length) return;
+    goal.convert.pop(); persist();
+  }
+  function goalGoldBuy(key, goalId){
+    var goal = state.subGoals[key].filter(function(g){ return g.id===goalId; })[0]; if(!goal) return;
+    var type = $("#ggbuy-"+goalId+"-type").value;
+    var karat = $("#ggbuy-"+goalId+"-karat").value;
+    var weight = num($("#ggbuy-"+goalId+"-weight").value);
+    var price = num($("#ggbuy-"+goalId+"-price").value);
+    var priceILS = num($("#ggbuy-"+goalId+"-priceils").value);
+    var location = ($("#ggbuy-"+goalId+"-location").value||"").trim();
+    var serial = ($("#ggbuy-"+goalId+"-serial").value||"").trim();
+    if(weight<=0 || price<=0){ toast("أدخل الوزن والسعر بشكل صحيح"); return; }
+    if(price > goalUSD(goal) + 0.01){ toast("رصيد الدولار بهذا الهدف غير كافٍ"); return; }
+    state.goldTx.buy.push({id:uid(), seq:nextSeq(), date:todayStr(), type:type, karat:karat, weight:weight, priceUSD:price, priceILS:priceILS||undefined, location:location, serial:serial, fundedByGoal:goalId, fundedByGoalKey:key});
+    clearField("ggbuy-"+goalId+"-weight"); clearField("ggbuy-"+goalId+"-price"); clearField("ggbuy-"+goalId+"-priceils");
+    clearField("ggbuy-"+goalId+"-location"); clearField("ggbuy-"+goalId+"-serial");
+    persist();
+    toast("تم شراء الذهب لهذا الهدف — يظهر بصفحة الذهب أيضًا");
+  }
+  function undoGoalGoldBuy(key, goalId){
+    var list = state.goldTx.buy.filter(function(b){ return b.fundedByGoal===goalId; });
+    if(!list.length) return;
+    var last = list.reduce(function(a,b){ return b.seq>a.seq ? b : a; });
+    state.goldTx.buy = state.goldTx.buy.filter(function(b){ return b!==last; });
+    persist();
+  }
+
+  // ---------- stocks ----------
+  function stockBuy(){
+    var amount = num($("#stock-amount").value);
+    var name = ($("#stock-name").value||"").trim();
+    var price = num($("#stock-price").value);
+    var date = $("#stock-date").value || todayStr();
+    if(!name){ toast("اكتب اسم السهم أو الشركة"); return; }
+    if(amount<=0 || price<=0){ toast("أدخل المبلغ وسعر الشراء بشكل صحيح"); return; }
+    if(amount > fundUSD("stocks") + 0.01){ toast("رصيد الدولار غير كافٍ"); return; }
+    state.stockTx.buy.push({id:uid(), seq:nextSeq(), date:date, name:name, amount:amount, price:price});
+    clearField("stock-amount"); clearField("stock-name"); clearField("stock-price");
+    persist();
+  }
+  function undoStockBuy(){
+    if(!state.stockTx.buy.length) return;
+    state.stockTx.buy.pop(); persist();
+  }
+
+  // ---------- debt (per-person) actions ----------
+  function debtRegister(listKey, kind){
+    var name = $("#debt-name-"+listKey).value.trim();
+    var amount = num($("#debt-amount-"+listKey).value);
+    var currency = ($("#debt-currency-"+listKey) ? $("#debt-currency-"+listKey).value : "دولار") || "دولار";
+    var note = $("#debt-note-"+listKey) ? $("#debt-note-"+listKey).value.trim() : "";
+    if(!name){ toast("اكتب اسم الشخص"); return; }
+    if(amount<=0){ toast("أدخل مبلغًا صحيحًا"); return; }
+    var p = findOrCreatePerson(listKey, name);
+    var type = kind; // 'lend'|'borrow'|'repay'
+    p.entries.push({id:uid(), seq:nextSeq(), date:todayStr(), amount:amount, type:type, note:note, currency:currency});
+    clearField("debt-amount-"+listKey);
+    if($("#debt-note-"+listKey)) clearField("debt-note-"+listKey);
+    persist();
+  }
+  function undoDebtLast(listKey){
+    var persons = state.debts[listKey];
+    var best=null, bestSeq=-1;
+    persons.forEach(function(p){ p.entries.forEach(function(e){ if(e.seq>bestSeq){ bestSeq=e.seq; best={p:p,e:e}; } }); });
+    if(!best) return;
+    best.p.entries = best.p.entries.filter(function(e){ return e!==best.e; });
+    persist();
+  }
+
+  // ---------- gold actions ----------
+  function goldConvert(){
+    var amountILS = num($("#gold-conv-amount").value);
+    var rate = num($("#gold-conv-rate").value);
+    if(amountILS<=0 || rate<=0){ toast("أدخل مبلغًا وسعر صرف صحيحين"); return; }
+    if(amountILS > goldILSBalance() + 0.01){ toast("رصيد الشيكل غير كافٍ"); return; }
+    var usd = amountILS / rate;
+    state.goldTx.convert.push({id:uid(), seq:nextSeq(), date:todayStr(), amountILS:amountILS, rate:rate, usd:usd});
+    clearField("gold-conv-amount"); clearField("gold-conv-rate");
+    persist();
+  }
+  function undoGold(sub){
+    var log = state.goldTx[sub]; if(!log.length) return;
+    log.pop(); persist();
+  }
+  function goldTrade(kind){
+    var type = $("#gold-"+kind+"-type").value;
+    var karat = $("#gold-"+kind+"-karat").value;
+    var weight = num($("#gold-"+kind+"-weight").value);
+    var price = num($("#gold-"+kind+"-price").value);
+    var priceILS = num($("#gold-"+kind+"-priceils").value);
+    var location = ($("#gold-"+kind+"-location").value||"").trim();
+    var serial = ($("#gold-"+kind+"-serial").value||"").trim();
+    if(weight<=0 || price<=0){ toast("أدخل الوزن والسعر بشكل صحيح"); return; }
+    if(kind==="buy" && price > goldUSDBalance() + 0.01){ toast("رصيد الدولار غير كافٍ"); return; }
+    state.goldTx[kind].push({id:uid(), seq:nextSeq(), date:todayStr(), type:type, karat:karat, weight:weight, priceUSD:price, priceILS:priceILS||undefined, location:location, serial:serial});
+    clearField("gold-"+kind+"-weight"); clearField("gold-"+kind+"-price"); clearField("gold-"+kind+"-priceils");
+    clearField("gold-"+kind+"-location"); clearField("gold-"+kind+"-serial");
+    persist();
+  }
+  // Lot-based sell: the user picks one specific already-bought piece (by its
+  // serial/location/date) rather than re-typing type/karat/weight freely.
+  function goldSell(){
+    var boughtId = $("#gold-sell-lot") ? $("#gold-sell-lot").value : "";
+    var priceUSD = num($("#gold-sell-price").value);
+    var priceILS = num($("#gold-sell-priceils").value);
+    if(!boughtId){ toast("اختر القطعة يلي بدك تبيعها"); return; }
+    if(priceUSD<=0){ toast("أدخل سعر بيع صحيح"); return; }
+    var lot = state.goldTx.buy.filter(function(b){ return b.id===boughtId; })[0];
+    if(!lot){ toast("هذه القطعة غير موجودة"); return; }
+    state.goldTx.sell.push({id:uid(), seq:nextSeq(), date:todayStr(), boughtId:boughtId,
+      type:lot.type, karat:lot.karat, weight:lot.weight, location:lot.location, serial:lot.serial,
+      priceUSD:priceUSD, priceILS:priceILS||undefined});
+    clearField("gold-sell-price"); clearField("gold-sell-priceils");
+    persist();
+  }
+  function fundGoldBuy(fundKey){
+    var type = $("#fbuy-"+fundKey+"-type").value;
+    var karat = $("#fbuy-"+fundKey+"-karat").value;
+    var weight = num($("#fbuy-"+fundKey+"-weight").value);
+    var price = num($("#fbuy-"+fundKey+"-price").value);
+    var priceILS = num($("#fbuy-"+fundKey+"-priceils").value);
+    var location = ($("#fbuy-"+fundKey+"-location").value||"").trim();
+    var serial = ($("#fbuy-"+fundKey+"-serial").value||"").trim();
+    if(weight<=0 || price<=0){ toast("أدخل الوزن والسعر بشكل صحيح"); return; }
+    if(price > fundUSD(fundKey) + 0.01){ toast("رصيد الدولار بهذا الصندوق غير كافٍ"); return; }
+    state.goldTx.buy.push({id:uid(), seq:nextSeq(), date:todayStr(), type:type, karat:karat, weight:weight, priceUSD:price, priceILS:priceILS||undefined, location:location, serial:serial, fundedBy:fundKey});
+    clearField("fbuy-"+fundKey+"-weight"); clearField("fbuy-"+fundKey+"-price"); clearField("fbuy-"+fundKey+"-priceils");
+    clearField("fbuy-"+fundKey+"-location"); clearField("fbuy-"+fundKey+"-serial");
+    persist();
+    toast("تم شراء الذهب — يظهر بصفحة الذهب أيضًا");
+  }
+  function undoFundGoldBuy(fundKey){
+    var list = state.goldTx.buy.filter(function(b){ return b.fundedBy===fundKey; });
+    if(!list.length) return;
+    var last = list.reduce(function(a,b){ return b.seq>a.seq ? b : a; });
+    state.goldTx.buy = state.goldTx.buy.filter(function(b){ return b!==last; });
+    persist();
+  }
+  // Sell a specific piece that was bought directly from this fund's own $ —
+  // proceeds are credited back to that same fund (see fundUSD()).
+  function fundGoldSell(fundKey){
+    var boughtId = $("#fsell-"+fundKey+"-lot") ? $("#fsell-"+fundKey+"-lot").value : "";
+    var priceUSD = num($("#fsell-"+fundKey+"-price").value);
+    var priceILS = num($("#fsell-"+fundKey+"-priceils").value);
+    if(!boughtId){ toast("اختر القطعة يلي بدك تبيعها"); return; }
+    if(priceUSD<=0){ toast("أدخل سعر بيع صحيح"); return; }
+    var lot = state.goldTx.buy.filter(function(b){ return b.id===boughtId; })[0];
+    if(!lot){ toast("هذه القطعة غير موجودة"); return; }
+    state.goldTx.sell.push({id:uid(), seq:nextSeq(), date:todayStr(), boughtId:boughtId,
+      type:lot.type, karat:lot.karat, weight:lot.weight, location:lot.location, serial:lot.serial,
+      priceUSD:priceUSD, priceILS:priceILS||undefined});
+    clearField("fsell-"+fundKey+"-price"); clearField("fsell-"+fundKey+"-priceils");
+    persist();
+  }
+  function undoFundGoldSell(fundKey){
+    var list = state.goldTx.sell.filter(function(s){ var lot = lotForSell(s); return lot && lot.fundedBy===fundKey; });
+    if(!list.length) return;
+    var last = list.reduce(function(a,b){ return b.seq>a.seq ? b : a; });
+    state.goldTx.sell = state.goldTx.sell.filter(function(s){ return s!==last; });
+    persist();
+  }
+  // ---------- rendering ----------
+  function renderTabs(){
+    var el = $("#tabs");
+    el.innerHTML = PAGES.map(function(p){
+      var dotStyle = p.key==="home" ? "" : ' style="--dot:var('+CATS[p.key].varc+')"';
+      var dot = p.key==="home" ? "" : '<span class="dot"'+dotStyle+'></span>';
+      return '<button data-page="'+p.key+'" class="'+(ui.page===p.key?"active":"")+'">'+dot+'<span>'+p.icon+' '+esc(p.name)+'</span></button>';
+    }).join("");
+  }
+
+  function drawDoughnut(canvas, segments){
+    var ctx = canvas.getContext("2d");
+    var dpr = window.devicePixelRatio || 1;
+    var size = canvas.clientWidth;
+    canvas.width = size*dpr; canvas.height = size*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,size,size);
+    var cx=size/2, cy=size/2, rOuter=size/2-6, rInner=rOuter*0.62;
+    var total = segments.reduce(function(s,x){ return s+x.value; }, 0);
+    if(total<=0){
+      ctx.beginPath(); ctx.arc(cx,cy,rOuter,0,Math.PI*2); ctx.fillStyle = cssVar("--surface-2"); ctx.fill();
+      ctx.fillStyle = cssVar("--ink-muted"); ctx.font = "13px Tajawal, sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText("لا يوجد رصيد بعد", cx, cy);
+      return;
+    }
+    var start = -Math.PI/2, gap = 0.018;
+    segments.forEach(function(seg){
+      if(seg.value<=0) return;
+      var frac = seg.value/total;
+      var end = start + frac*Math.PI*2;
+      var a0 = start+gap/2, a1 = end-gap/2;
+      if(a1<a0) a1=a0;
+      ctx.beginPath();
+      ctx.arc(cx,cy,rOuter,a0,a1);
+      ctx.arc(cx,cy,rInner,a1,a0,true);
+      ctx.closePath();
+      ctx.fillStyle = seg.color;
+      ctx.fill();
+      start = end;
+    });
+    ctx.fillStyle = cssVar("--ink");
+    ctx.font = "900 18px Tajawal, sans-serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(fmt(total), cx, cy-8);
+    ctx.fillStyle = cssVar("--ink-muted");
+    ctx.font = "11px Tajawal, sans-serif";
+    ctx.fillText("إجمالي الأصول (₪)", cx, cy+14);
+  }
+
+  function pageHome(){
+    var p = state.pending;
+    var needsChecked = state.needs.filter(function(n){ return n.checked; });
+    var needsTotal = needsChecked.reduce(function(s,n){ return s+num(n.amount); }, 0);
+
+    var assetSegs = ["emergency","otherGoals","stocks","gold","luxury","owedToMe"].map(function(k){
+      var val;
+      if(k==="gold") val = goldILSBalance()+goldUSDBalance();
+      else if(k==="owedToMe") val = debtTotal("owedToMe");
+      else val = fundAssetILS(k) + fundUSDDisplay(k);
+      return { key:k, label:CATS[k].name, value:Math.max(0,val), color:cssVar(CATS[k].varc) };
+    });
+    var iOweTotal = debtTotal("iOwe");
+
+    var html = "";
+
+    html += '<div class="card"><h2><span class="ic">📋</span> الخطوة ١ — المصاريف الأساسية الشهرية</h2>' +
+      '<div class="hint">مبالغ ثابتة، عدّلها مرة وحدة وبتضل محفوظة. بلاش تحديد الصح جنبها بينخصم تلقائي من كل دخل جديد — إذا في شهر ما بدك تخصم بند معين، شيل الصح جنبه بس هالمرة</div>' +
+      state.needs.map(function(n){
+        var reminder = NEEDS_REMINDERS[(n.name||"").trim()];
+        var amtVal = n.amount ? n.amount : "";
+        var amtPlaceholder = reminder ? reminder : "0";
+        return '<div class="needs-item">' +
+          '<label class="chk-wrap"><input type="checkbox" '+(n.checked?"checked":"")+' data-need-check="'+n.id+'"></label>' +
+          '<input type="text" value="'+esc(n.name)+'" data-need-name="'+n.id+'" onfocus="this.select()">' +
+          '<input type="text" inputmode="decimal" value="'+amtVal+'" placeholder="'+amtPlaceholder+'" data-need-amount="'+n.id+'" onfocus="this.select()">' +
+          '<button class="x" data-need-remove="'+n.id+'">✕</button>' +
+        '</div>';
+      }).join("") +
+      '<div class="row-actions"><button class="btn btn-ghost btn-sm" data-act="add-need">➕ إضافة بند</button></div>' +
+      '<div class="alloc-summary"><span>الإجمالي يلي رح ينخصم من كل دخل جديد</span><b id="needs-total-val">'+fmt(needsTotal,"₪")+'</b></div>' +
+      '</div>';
+
+    html += '<div class="card"><h2><span class="ic">💵</span> الخطوة ٢ — إضافة دخل</h2>' +
+      '<div class="grid2">' +
+        '<div class="field"><label>التاريخ</label><input type="date" id="inc-date" value="'+todayStr()+'"></div>' +
+        '<div class="field"><label>العملة</label><select id="inc-currency"><option value="شيكل">شيكل</option><option value="دولار">دولار</option></select></div>' +
+      '</div>' +
+      '<div class="field"><label>من وين (المصدر)</label><input type="text" id="inc-source" placeholder="راتب، سلفة، عمل إضافي..."></div>' +
+      '<div class="field"><label>المبلغ</label><input type="text" inputmode="decimal" id="inc-amount" placeholder="0"></div>' +
+      '<div class="field"><label>سداد دين لي (اختياري)</label><input type="text" id="inc-repay-person" placeholder="اسم الشخص إذا هذا الدخل سداد دين له" list="inc-repay-names">' +
+        '<datalist id="inc-repay-names">' + state.debts.owedToMe.map(function(p){ return '<option value="'+esc(p.name)+'">'; }).join("") + '</datalist></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="add-income">➕ إضافة</button>' +
+      (state.income.length ? '<button class="btn btn-ghost" data-act="undo-income">↩ تراجع عن آخر دخل</button>' : '') +
+      '</div></div>';
+
+    if(p){
+      html += '<div class="card"><h2><span class="ic">🧭</span> الخطوة ٣ — توزيع المتبقي</h2>';
+      html += '<div class="grid3" style="margin-bottom:12px;">' +
+        '<div class="stat"><div class="v">'+fmt(p.incomeAmount,"₪")+'</div><div class="l">الدخل المدخل</div></div>' +
+        '<div class="stat"><div class="v">'+fmt(p.needsTotal,"₪")+'</div><div class="l">المصاريف المخصومة</div></div>' +
+        '<div class="stat good"><div class="v">'+fmt(p.remaining,"₪")+'</div><div class="l">المتبقي للتوزيع</div></div>' +
+      '</div>';
+      DIST_CAT_ORDER.forEach(function(k){
+        html += '<div class="alloc-row" style="--c:var('+CATS[k].varc+')">' +
+          '<span class="swatch"></span><span class="nm">'+CATS[k].icon+' '+esc(CATS[k].name)+'</span>' +
+          '<input type="text" inputmode="decimal" id="alloc-'+k+'" value="'+(p.alloc[k]||0)+'" oninput="window.__moneyApp.allocInput()">';
+        html += '</div>';
+        if(k==="iOwe"){
+          html += '<div class="field alloc-person"><input type="text" id="alloc-person-iOwe" placeholder="اسم الشخص يلي بتسدد له" value="'+esc(p.iOwePerson||"")+'"></div>';
+        }
+      });
+      html += '<div class="alloc-summary" id="alloc-summary"><span>الموزَّع الآن</span><b id="alloc-summary-val">0</b></div>';
+      html += '<div class="row-actions"><button class="btn btn-primary" data-act="send">📤 إرسال التوزيع</button></div>';
+      html += '</div>';
+    }
+    if(state.distLog.length){
+      html += '<div class="card"><h2><span class="ic">↩</span> تراجع</h2><div class="hint">إلغاء آخر عملية توزيع تمت</div>' +
+        '<button class="btn btn-danger" data-act="undo-send">↩ تراجع عن آخر توزيع</button></div>';
+    }
+
+    html += '<div class="card"><h2><span class="ic">📊</span> كل أموالك بنظرة وحدة</h2>' +
+      '<div style="max-width:220px;margin:0 auto;"><canvas id="donut" style="width:100%;aspect-ratio:1;display:block;"></canvas></div>' +
+      '<div class="legend">' + assetSegs.map(function(s){
+        return '<span class="li"><span class="sw" style="background:'+s.color+'"></span>'+s.label+': '+fmt(s.value,"₪")+'</span>';
+      }).join("") + '</div>' +
+      (iOweTotal>0 ? '<div class="stat bad" style="margin-top:12px;"><div class="v">'+fmt(iOweTotal,"₪")+'</div><div class="l">إجمالي عليك من ديون (لا يُحسب من الأصول)</div></div>' : '') +
+      '</div>';
+
+    var recentIncome = state.income.slice().reverse();
+    var incomeView = logView("home-income", recentIncome);
+    html += '<div class="card"><h2><span class="ic">🧾</span> آخر عمليات الدخل</h2>' +
+      (recentIncome.length ? '<table class="log"><tr><th>التاريخ</th><th>المصدر</th><th>المبلغ</th></tr>' +
+        incomeView.rows.map(function(r){ return '<tr><td>'+fmtDate(r.date)+'</td><td>'+esc(r.source)+'</td><td>'+fmt(r.amount)+' '+esc(r.currency)+'</td></tr>'; }).join("") +
+        '</table>' + incomeView.toggle : '<div class="empty">لا يوجد بعد</div>') + '</div>';
+
+    var recentDist = state.distLog.slice().reverse();
+    var distView = logView("home-dist", recentDist);
+    html += '<div class="card"><h2><span class="ic">📤</span> آخر عمليات التوزيع</h2>' +
+      (recentDist.length ? '<table class="log"><tr><th>التاريخ</th><th>الصندوق</th><th>لمين</th><th>المبلغ</th></tr>' +
+        distView.rows.map(function(r){ return '<tr><td>'+fmtDate(r.date)+'</td><td>'+CATS[r.category].icon+' '+esc(CATS[r.category].name)+'</td><td>'+esc(r.person||"—")+'</td><td>'+fmt(r.amount,"₪")+'</td></tr>'; }).join("") +
+        '</table>' + distView.toggle : '<div class="empty">لا يوجد بعد</div>') + '</div>';
+
+    $("#page").innerHTML = html;
+    var canvas = $("#donut");
+    if(canvas) drawDoughnut(canvas, assetSegs.map(function(s){ return {value:s.value, color:s.color}; }));
+    updateAllocSummary();
+  }
+
+  function updateAllocSummary(){
+    var p = state.pending; if(!p) return;
+    var total = 0;
+    DIST_CAT_ORDER.forEach(function(k){ var el = $("#alloc-"+k); if(el) total += num(el.value); });
+    var elVal = $("#alloc-summary-val"), elWrap = $("#alloc-summary");
+    if(!elVal) return;
+    elVal.textContent = fmt(total,"₪") + " / " + fmt(p.remaining,"₪");
+    elWrap.classList.toggle("over", total > p.remaining+0.01);
+  }
+
+  function usdConvertCard(key){
+    var log = (state.fundConvert[key]||[]).slice().reverse();
+    var v = logView("fundconv-"+key, log);
+    return '<div class="card"><h2><span class="ic">🔁</span> تحويل جزء لدولار</h2>' +
+      '<div class="grid2"><div class="field"><label>المبلغ (₪)</label><input type="text" inputmode="decimal" id="fundconv-amount-'+key+'" placeholder="0"></div>' +
+      '<div class="field"><label>سعر الصرف</label><input type="text" inputmode="decimal" id="fundconv-rate-'+key+'" placeholder="مثلاً 3.7" step="0.01"></div></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="fund-usd-convert" data-key="'+key+'">🔁 تحويل</button>' +
+      (log.length ? '<button class="btn btn-ghost" data-act="fund-usd-undo" data-key="'+key+'">↩ تراجع</button>' : '') + '</div>' +
+      (log.length ? '<table class="log" style="margin-top:10px;"><tr><th>التاريخ</th><th>₪</th><th>السعر</th><th>$</th></tr>' +
+        v.rows.map(function(c){ return '<tr><td>'+fmtDate(c.date)+'</td><td>'+fmt(c.amountILS)+'</td><td>'+c.rate+'</td><td>'+fmt(c.usd)+'</td></tr>'; }).join("") + '</table>' + v.toggle : '') +
+      '</div>';
+  }
+  function goldBuyFromFundCard(key){
+    var typeOpts = ["ليرة إنجليزي","أونصة","سبيكة","مصاغ","أخرى"];
+    var karatOpts = ["18","21","22","24"];
+    var log = state.goldTx.buy.filter(function(b){ return b.fundedBy===key; }).slice().sort(function(a,b){ return b.seq-a.seq; });
+    return '<div class="card"><h2><span class="ic">🪙</span> شراء ذهب مباشرة من رصيد الدولار</h2>' +
+      '<div class="hint">بيتخصم من رصيد الدولار تبع هذا الصندوق، وبيظهر مع باقي الذهب بصفحة "ذهب"</div>' +
+      '<div class="grid3">' +
+      '<div class="field"><label>النوع</label><select id="fbuy-'+key+'-type">'+typeOpts.map(function(t){return '<option>'+t+'</option>';}).join("")+'</select></div>' +
+      '<div class="field"><label>العيار</label><select id="fbuy-'+key+'-karat">'+karatOpts.map(function(k){return '<option>'+k+'</option>';}).join("")+'</select></div>' +
+      '<div class="field"><label>الوزن</label><input type="text" inputmode="decimal" id="fbuy-'+key+'-weight" placeholder="0" step="0.01"></div>' +
+      '</div>' +
+      '<div class="grid3">' +
+      '<div class="field"><label>السعر بالدولار ($)</label><input type="text" inputmode="decimal" id="fbuy-'+key+'-price" placeholder="0"></div>' +
+      '<div class="field"><label>السعر بالشيكل (اختياري)</label><input type="text" inputmode="decimal" id="fbuy-'+key+'-priceils" placeholder="0"></div>' +
+      '<div class="field"><label>المكان</label><input type="text" id="fbuy-'+key+'-location" placeholder="—"></div>' +
+      '</div>' +
+      '<div class="field"><label>الرقم التسلسلي</label><input type="text" id="fbuy-'+key+'-serial" placeholder="Serial #"></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="fund-gold-buy" data-key="'+key+'">🪙 شراء</button>' +
+      (log.length ? '<button class="btn btn-ghost" data-act="fund-gold-buy-undo" data-key="'+key+'">↩ تراجع</button>' : '') + '</div>' +
+      (function(){ var v = logView("fundgoldbuy-"+key, log);
+        return log.length ? '<table class="log" style="margin-top:10px;"><tr><th>التاريخ</th><th>النوع</th><th>العيار</th><th>الوزن</th><th>$</th></tr>' +
+          v.rows.map(function(b){ return '<tr><td>'+fmtDate(b.date)+'</td><td>'+esc(b.type)+'</td><td>'+b.karat+'</td><td>'+b.weight+'</td><td>'+fmt(b.priceUSD)+'</td></tr>'; }).join("") + '</table>' + v.toggle : ''; })() +
+      '</div>';
+  }
+  // Lot-based sell, scoped to gold bought directly from this fund's own $ —
+  // selling one credits that fund's $ balance back (see fundUSD()).
+  function fundGoldSellCard(key){
+    var lots = unsoldBuys().filter(function(b){ return b.fundedBy===key; }).sort(function(a,b){ return b.seq-a.seq; });
+    var log = state.goldTx.sell.filter(function(s){ var lot = lotForSell(s); return lot && lot.fundedBy===key; }).slice().sort(function(a,b){ return b.seq-a.seq; });
+    var html = '<div class="card"><h2><span class="ic">💰</span> بيع ذهب من هذا الصندوق</h2>';
+    if(!lots.length){
+      html += '<div class="empty">لا يوجد قطع مشتراة من هذا الصندوق متاحة للبيع حاليًا</div>';
+    } else {
+      html += '<div class="field"><label>اختر القطعة</label><select id="fsell-'+key+'-lot">' +
+        '<option value="">— اختر —</option>' +
+        lots.map(function(b){
+          return '<option value="'+b.id+'">'+esc(b.type)+' · عيار '+b.karat+' · '+b.weight+'غ · '+esc(b.serial||"بدون سيريال")+' · '+esc(b.location||"بدون مكان")+' · '+fmtDate(b.date)+'</option>';
+        }).join("") + '</select></div>' +
+        '<div class="grid2"><div class="field"><label>سعر البيع بالدولار ($)</label><input type="text" inputmode="decimal" id="fsell-'+key+'-price" placeholder="0"></div>' +
+        '<div class="field"><label>سعر البيع بالشيكل (اختياري)</label><input type="text" inputmode="decimal" id="fsell-'+key+'-priceils" placeholder="0"></div></div>' +
+        '<div class="row-actions"><button class="btn btn-danger" data-act="fund-gold-sell" data-key="'+key+'">💰 بيع</button>' +
+        '</div>';
+    }
+    if(log.length){
+      var v = logView("fundgoldsell-"+key, log);
+      html += '<div class="row-actions"><button class="btn btn-ghost" data-act="fund-gold-sell-undo" data-key="'+key+'">↩ تراجع عن آخر بيع</button></div>' +
+        '<table class="log" style="margin-top:10px;"><tr><th>التاريخ</th><th>النوع</th><th>العيار</th><th>الوزن</th><th>$</th></tr>' +
+        v.rows.map(function(s){ return '<tr><td>'+fmtDate(s.date)+'</td><td>'+esc(s.type)+'</td><td>'+s.karat+'</td><td>'+s.weight+'</td><td>'+fmt(s.priceUSD)+'</td></tr>'; }).join("") + '</table>' + v.toggle;
+    }
+    html += '</div>';
+    return html;
+  }
+  function withdrawOnlyCard(key, log){
+    return '<div class="card"><h2><span class="ic">➖</span> سحب</h2>' +
+      '<div class="hint">الإيداع بهذا الصندوق يصير فقط من توزيع الصفحة الرئيسية عشان يكون واضح المصاري جايه من وين</div>' +
+      '<div class="field"><label>المبلغ</label><input type="text" inputmode="decimal" id="fund-amount-'+key+'" placeholder="0"></div>' +
+      '<div class="field"><label>ملاحظة (اختياري)</label><input type="text" id="fund-note-'+key+'" placeholder="سبب العملية"></div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-danger" data-act="fund-withdraw" data-key="'+key+'">➖ سحب</button>' +
+        (log.length ? '<button class="btn btn-ghost" data-act="fund-undo" data-key="'+key+'">↩ تراجع عن آخر عملية</button>' : '') +
+      '</div></div>';
+  }
+  function txLogCard(key, log){
+    var v = logView("fundtx-"+key, log);
+    return '<div class="card"><h2><span class="ic">🧾</span> السجل الكامل</h2>' +
+      (log.length ? '<table class="log"><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>ملاحظة</th></tr>' +
+        v.rows.map(function(t){
+          return '<tr><td>'+fmtDate(t.date)+'</td><td><span class="badge '+(t.type==="withdraw"?"in":"out")+'">'+(t.type==="withdraw"?"سحب":"إيداع")+'</span></td><td>'+fmt(t.amount,"₪")+'</td><td>'+esc(t.note||"—")+'</td></tr>';
+        }).join("") + '</table>' + v.toggle : '<div class="empty">لا يوجد عمليات بعد</div>') + '</div>';
+  }
+
+  // ---------- per-goal convert / gold-buy card fragments (embedded inside a goal's own card) ----------
+  function goalConvertCardInner(key, goal){
+    var log = (goal.convert||[]).slice().reverse();
+    var avail = goalAvailableILS(goal);
+    var usd = goalUSD(goal);
+    var html = '<div style="border-top:1px dashed var(--grid); margin-top:12px; padding-top:12px;">';
+    html += '<div class="stat" style="margin-bottom:10px;"><div class="v">'+fmt(usd,"$")+'</div><div class="l">رصيد الدولار لهذا الهدف</div></div>';
+    html += '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">🔁 تحويل جزء لدولار (المتاح بالشيكل: '+fmt(avail,"₪")+')</div>';
+    html += '<div class="grid2"><div class="field"><label>المبلغ (₪)</label><input type="text" inputmode="decimal" id="goalconv-amount-'+goal.id+'" placeholder="0"></div>' +
+      '<div class="field"><label>سعر الصرف</label><input type="text" inputmode="decimal" id="goalconv-rate-'+goal.id+'" placeholder="مثلاً 3.7" step="0.01"></div></div>' +
+      '<div class="row-actions"><button class="btn btn-primary btn-sm" data-act="goal-usd-convert" data-key="'+key+'" data-goal="'+goal.id+'">🔁 تحويل</button>' +
+      (log.length ? '<button class="btn btn-ghost btn-sm" data-act="goal-usd-undo" data-key="'+key+'" data-goal="'+goal.id+'">↩ تراجع</button>' : '') + '</div>';
+    if(log.length){
+      var v = logView("goalconv-"+goal.id, log);
+      html += '<table class="log" style="margin-top:8px;"><tr><th>التاريخ</th><th>₪</th><th>السعر</th><th>$</th></tr>' +
+        v.rows.map(function(c){ return '<tr><td>'+fmtDate(c.date)+'</td><td>'+fmt(c.amountILS)+'</td><td>'+c.rate+'</td><td>'+fmt(c.usd)+'</td></tr>'; }).join("") + '</table>' + v.toggle;
+    }
+    html += '</div>';
+    return html;
+  }
+  function goalGoldBuyCardInner(key, goal){
+    var typeOpts = ["ليرة إنجليزي","أونصة","سبيكة","مصاغ","أخرى"];
+    var karatOpts = ["18","21","22","24"];
+    var log = state.goldTx.buy.filter(function(b){ return b.fundedByGoal===goal.id; }).slice().sort(function(a,b){ return b.seq-a.seq; });
+    var html = '<div style="border-top:1px dashed var(--grid); margin-top:12px; padding-top:12px;">';
+    html += '<div style="font-size:13px;font-weight:800;margin-bottom:8px;">🪙 شراء ذهب لهذا الهدف (من رصيد الدولار تبعه)</div>';
+    html += '<div class="grid3">' +
+      '<div class="field"><label>النوع</label><select id="ggbuy-'+goal.id+'-type">'+typeOpts.map(function(t){return '<option>'+t+'</option>';}).join("")+'</select></div>' +
+      '<div class="field"><label>العيار</label><select id="ggbuy-'+goal.id+'-karat">'+karatOpts.map(function(k){return '<option>'+k+'</option>';}).join("")+'</select></div>' +
+      '<div class="field"><label>الوزن</label><input type="text" inputmode="decimal" id="ggbuy-'+goal.id+'-weight" placeholder="0" step="0.01"></div>' +
+      '</div>' +
+      '<div class="grid3">' +
+      '<div class="field"><label>السعر بالدولار ($)</label><input type="text" inputmode="decimal" id="ggbuy-'+goal.id+'-price" placeholder="0"></div>' +
+      '<div class="field"><label>السعر بالشيكل (اختياري)</label><input type="text" inputmode="decimal" id="ggbuy-'+goal.id+'-priceils" placeholder="0"></div>' +
+      '<div class="field"><label>المكان</label><input type="text" id="ggbuy-'+goal.id+'-location" placeholder="—"></div>' +
+      '</div>' +
+      '<div class="field"><label>الرقم التسلسلي</label><input type="text" id="ggbuy-'+goal.id+'-serial" placeholder="Serial #"></div>' +
+      '<div class="row-actions"><button class="btn btn-primary btn-sm" data-act="goal-gold-buy" data-key="'+key+'" data-goal="'+goal.id+'">🪙 شراء</button>' +
+      (log.length ? '<button class="btn btn-ghost btn-sm" data-act="goal-gold-buy-undo" data-key="'+key+'" data-goal="'+goal.id+'">↩ تراجع</button>' : '') + '</div>';
+    if(log.length){
+      var v = logView("goalgoldbuy-"+goal.id, log);
+      html += '<table class="log" style="margin-top:8px;"><tr><th>التاريخ</th><th>النوع</th><th>العيار</th><th>الوزن</th><th>$</th></tr>' +
+        v.rows.map(function(b){ return '<tr><td>'+fmtDate(b.date)+'</td><td>'+esc(b.type)+'</td><td>'+b.karat+'</td><td>'+b.weight+'</td><td>'+fmt(b.priceUSD)+'</td></tr>'; }).join("") + '</table>' + v.toggle;
+    }
+    html += '</div>';
+    return html;
+  }
+
+  // ---------- stocks: buy card + per-stock investment chart ----------
+  function stockBuyCard(){
+    var usd = fundUSD("stocks");
+    var log = state.stockTx.buy.slice().reverse();
+    var v = logView("stockbuy", log);
+    return '<div class="card"><h2><span class="ic">📈</span> شراء سهم</h2>' +
+      '<div class="hint">بينخصم من رصيد الدولار تبع صندوق الأسهم (المتاح الآن: '+fmt(usd,"$")+')</div>' +
+      '<div class="grid2"><div class="field"><label>المبلغ ($)</label><input type="text" inputmode="decimal" id="stock-amount" placeholder="0"></div>' +
+      '<div class="field"><label>اسم السهم أو الشركة</label><input type="text" id="stock-name" placeholder="مثلاً: Apple"></div></div>' +
+      '<div class="grid2"><div class="field"><label>سعر الشراء</label><input type="text" inputmode="decimal" id="stock-price" placeholder="0" step="0.01"></div>' +
+      '<div class="field"><label>التاريخ</label><input type="date" id="stock-date" value="'+todayStr()+'"></div></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="stock-buy">📈 شراء</button>' +
+      (log.length ? '<button class="btn btn-ghost" data-act="stock-buy-undo">↩ تراجع</button>' : '') + '</div>' +
+      (log.length ? '<table class="log" style="margin-top:10px;"><tr><th>التاريخ</th><th>السهم</th><th>المبلغ</th><th>سعر الشراء</th></tr>' +
+        v.rows.map(function(t){ return '<tr><td>'+fmtDate(t.date)+'</td><td>'+esc(t.name)+'</td><td>'+fmt(t.amount,"$")+'</td><td>'+fmt(t.price)+'</td></tr>'; }).join("") + '</table>' + v.toggle : '') +
+      '</div>';
+  }
+  function stockChartCard(){
+    var map = {};
+    state.stockTx.buy.forEach(function(t){ map[t.name] = (map[t.name]||0) + t.amount; });
+    var rows = Object.keys(map).map(function(n){ return {name:n, amount:map[n]}; }).sort(function(a,b){ return b.amount-a.amount; });
+    var max = rows.reduce(function(m,r){ return Math.max(m,r.amount); }, 0) || 1;
+    var color = cssVar("--cat-stocks");
+    var html = '<div class="card"><h2><span class="ic">📊</span> توزيع الاستثمار حسب السهم</h2>';
+    if(!rows.length){ html += '<div class="empty">لا يوجد استثمارات بعد</div>'; }
+    else {
+      html += rows.map(function(r){
+        var pct = Math.max(4, Math.round(r.amount/max*100));
+        return '<div style="margin-bottom:10px;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px;"><span style="font-weight:700;">'+esc(r.name)+'</span><span>'+fmt(r.amount,"$")+'</span></div>' +
+          '<div style="background:var(--grid);border-radius:999px;height:10px;overflow:hidden;"><div style="width:'+pct+'%;height:100%;background:'+color+';"></div></div>' +
+          '</div>';
+      }).join("");
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function pageFund(key){
+    if(GOAL_KEYS.indexOf(key)>=0) return pageGoalFund(key);
+    var ils = fundAssetILS(key);
+    var usd = fundUSDDisplay(key);
+    var log = state.fundTx[key].slice().reverse();
+    var html = '<div class="card"><div class="grid2">' +
+      '<div class="stat"><div class="v">'+fmt(ils,"₪")+'</div><div class="l">الرصيد الحالي (₪)</div></div>' +
+      '<div class="stat good"><div class="v">'+fmt(usd,"$")+'</div><div class="l">رصيد الدولار المتاح</div></div>' +
+      '</div></div>';
+    if(key==="emergency"){
+      html += goldSummaryCard(unsoldBuys().filter(function(b){ return b.fundedBy==="emergency"; }), "ملخص الذهب المشترى من هذا الصندوق");
+      html += withdrawOnlyCard(key, log);
+      html += usdConvertCard(key);
+      html += goldBuyFromFundCard(key);
+      html += fundGoldSellCard(key);
+      html += txLogCard(key, log);
+    } else if(key==="stocks"){
+      html += usdConvertCard(key);
+      html += stockBuyCard();
+      html += stockChartCard();
+      html += txLogCard(key, log);
+    }
+    $("#page").innerHTML = html;
+  }
+
+  function pageGoalFund(key){
+    var total = fundAssetILS(key);
+    var pool = fundPool(key);
+    var usd = fundUSDDisplay(key);
+    var goals = state.subGoals[key].slice().sort(function(a,b){ return (a.seq||0)-(b.seq||0); });
+    var allowGold = key==="otherGoals";
+
+    var html = '<div class="card"><div class="grid3">' +
+      '<div class="stat"><div class="v">'+fmt(total,"₪")+'</div><div class="l">إجمالي الصندوق (₪)</div></div>' +
+      '<div class="stat good"><div class="v">'+fmt(pool,"₪")+'</div><div class="l">غير مخصص لهدف (جاهز للتوزيع)</div></div>' +
+      '<div class="stat"><div class="v">'+fmt(usd,"$")+'</div><div class="l">رصيد الدولار المتاح</div></div>' +
+      '</div></div>';
+
+    html += withdrawOnlyCard(key, state.fundTx[key].slice().reverse());
+
+    html += '<div class="card"><h2><span class="ic">🎯</span> الأهداف داخل هذا الصندوق</h2>' +
+      '<div class="field"><label>اسم الهدف الجديد</label><input type="text" id="goal-name-'+key+'" placeholder="مثلاً: شراء أواعي"></div>' +
+      '<div class="field"><label>المبلغ المستهدف (اختياري)</label><input type="text" inputmode="decimal" id="goal-target-'+key+'" placeholder="0"></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="goal-add" data-key="'+key+'">➕ إنشاء هدف</button></div>' +
+      '</div>';
+
+    if(!goals.length){
+      html += '<div class="card"><div class="empty">لا يوجد أهداف بعد — أنشئ أول هدف فوق</div></div>';
+    }
+    goals.forEach(function(g){
+      var saved = goalSaved(g);
+      var reached = g.target>0 && saved >= g.target - 0.01;
+      var pct = g.target>0 ? Math.min(100, Math.round(saved/g.target*100)) : null;
+      html += '<div class="card">' +
+        '<h2><span class="ic">'+(reached?"🎉":"🎯")+'</span> '+esc(g.name)+
+          '<button class="x" style="margin-inline-start:auto;" data-act="goal-remove" data-key="'+key+'" data-goal="'+g.id+'">✕</button></h2>' +
+        '<div class="stat" style="margin-bottom:10px;"><div class="v">'+fmt(saved,"₪")+(g.target>0?' / '+fmt(g.target,"₪"):'')+'</div>' +
+        '<div class="l">'+(reached ? "🎉 وصلت هدفك!" : (g.target>0 ? "المتبقي: "+fmt(g.target-saved,"₪") : "بدون سقف محدد"))+'</div></div>' +
+        (g.target>0 ? '<div style="background:var(--grid);border-radius:999px;height:8px;overflow:hidden;margin-bottom:12px;"><div style="width:'+pct+'%;height:100%;background:'+(reached?"var(--good)":"var(--primary)")+';"></div></div>' : '') +
+        '<div class="grid2"><div class="field"><label>المبلغ</label><input type="text" inputmode="decimal" id="goalamt-'+g.id+'" placeholder="0"></div>' +
+        '<div class="field" style="display:flex;align-items:flex-end;gap:6px;">' +
+          '<button class="btn btn-primary btn-sm" data-act="goal-deposit" data-key="'+key+'" data-goal="'+g.id+'">➕ تخصيص</button>' +
+          '<button class="btn btn-danger btn-sm" data-act="goal-withdraw" data-key="'+key+'" data-goal="'+g.id+'">➖ صرف</button>' +
+        '</div></div>' +
+        (g.entries.length ? '<div class="row-actions" style="margin-top:0;"><button class="btn btn-ghost btn-sm" data-act="goal-undo" data-key="'+key+'" data-goal="'+g.id+'">↩ تراجع عن آخر عملية</button></div>' : '') +
+        goalConvertCardInner(key, g) +
+        (allowGold ? goalGoldBuyCardInner(key, g) : '') +
+        '</div>';
+    });
+
+    $("#page").innerHTML = html;
+  }
+
+  function pageDebt(listKey){
+    var isOwedToMe = listKey==="owedToMe";
+    var totalByCur = debtTotalByCurrency(listKey);
+    var persons = state.debts[listKey].slice().sort(function(a,b){
+      var ba=personBalance(a), bb=personBalance(b);
+      if((ba!==0) !== (bb!==0)) return ba!==0 ? -1 : 1;
+      return b.entries.length - a.entries.length;
+    });
+    var kindLabels = isOwedToMe ? {inc:"إقراض جديد", dec:"استلام سداد", incType:"lend", decType:"repay"}
+                                 : {inc:"تسجيل دين جديد", dec:"سداد", incType:"borrow", decType:"repay"};
+
+    var html = '<div class="card"><div class="'+(isOwedToMe?"grid2":"")+'">' +
+      '<div class="stat '+(isOwedToMe?"good":"bad")+'"><div class="v">'+fmtByCurrency(totalByCur)+'</div><div class="l">'+(isOwedToMe?"الصافي المستحق لك الآن":"إجمالي المستحق عليك للناس")+'</div></div>' +
+      (isOwedToMe ? '<div class="stat"><div class="v">'+fmtByCurrency(debtGrossLentByCurrency(listKey))+'</div><div class="l">إجمالي ما وضعته بهذا الصندوق (تاريخيًا)</div></div>' : '') +
+      '</div></div>';
+
+    html += '<div class="card"><h2><span class="ic">➕</span> تسجيل عملية</h2>' +
+      '<div class="field"><label>اسم الشخص</label><input type="text" id="debt-name-'+listKey+'" placeholder="اسم الشخص" list="names-'+listKey+'">' +
+      '<datalist id="names-'+listKey+'">' + state.debts[listKey].map(function(p){ return '<option value="'+esc(p.name)+'">'; }).join("") + '</datalist></div>' +
+      '<div class="grid2"><div class="field"><label>المبلغ</label><input type="text" inputmode="decimal" id="debt-amount-'+listKey+'" placeholder="0"></div>' +
+      '<div class="field"><label>العملة</label><select id="debt-currency-'+listKey+'">' +
+        DEBT_CURRENCIES.map(function(c){ return '<option value="'+esc(c)+'">'+esc(c)+'</option>'; }).join("") +
+      '</select></div></div>' +
+      '<div class="field"><label>ملاحظة (اختياري)</label><input type="text" id="debt-note-'+listKey+'" placeholder="—"></div>' +
+      '<div class="row-actions">' +
+        '<button class="btn btn-primary" data-act="debt-inc" data-key="'+listKey+'">➕ '+kindLabels.inc+'</button>' +
+        '<button class="btn btn-danger" data-act="debt-dec" data-key="'+listKey+'">✔ '+kindLabels.dec+'</button>' +
+        (state.debts[listKey].some(function(p){return p.entries.length;}) ? '<button class="btn btn-ghost" data-act="debt-undo" data-key="'+listKey+'">↩ تراجع عن آخر عملية</button>' : '') +
+      '</div></div>';
+
+    html += '<div class="card"><h2><span class="ic">👥</span> حسب الأشخاص</h2>';
+    if(!persons.length){ html += '<div class="empty">لا يوجد أشخاص مسجلين بعد</div>'; }
+    persons.forEach(function(p){
+      var balByCur = personBalanceByCurrency(p);
+      var allZero = Object.keys(balByCur).every(function(k){ return Math.abs(balByCur[k]) < 0.005; });
+      var open = !!ui.openPerson[listKey+"|"+p.id];
+      html += '<div class="person-card" data-toggle-person="'+listKey+'|'+p.id+'">' +
+        '<div class="ph"><span class="pname">'+esc(p.name)+'</span><span class="pbal" style="color:'+(allZero?"var(--ink-muted)":(isOwedToMe?"var(--good)":"var(--critical)"))+'">'+fmtByCurrency(balByCur,{abs:true})+'</span></div>' +
+        '<div class="pmeta">'+(allZero?"مسدد بالكامل ✓":(isOwedToMe?"باقي له عندك":"باقي عليك له"))+' · '+p.entries.length+' عملية' + (open?" · اضغط للطي":" · اضغط للتفاصيل")+'</div>';
+      if(open){
+        var entries = p.entries.slice().sort(function(a,b){ return (b.seq||0)-(a.seq||0); });
+        var ev = logView("debtentries-"+listKey+"-"+p.id, entries);
+        html += '<div class="person-detail"><table class="log"><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>العملة</th><th>ملاحظة</th></tr>' +
+          ev.rows.map(function(e){
+            var label = e.type==="repay" ? "سداد" : (e.type==="lend" ? "إقراض" : "دين جديد");
+            var cls = e.type==="repay" ? "out" : "in";
+            return '<tr><td>'+fmtDate(e.date)+'</td><td><span class="badge '+cls+'">'+label+'</span></td><td>'+fmt(e.amount)+'</td><td>'+esc(entryCurrency(e))+'</td><td>'+esc(e.note||"—")+'</td></tr>';
+          }).join("") + '</table>' + ev.toggle + '</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+    $("#page").innerHTML = html;
+  }
+
+  function pageGold(){
+    var ils = goldILSBalance(), usd = goldUSDBalance();
+    var unsold = unsoldBuys();
+    var convLog = state.goldTx.convert.slice().reverse();
+    var buyLog = state.goldTx.buy.slice().reverse();
+    var sellLog = state.goldTx.sell.slice().reverse();
+
+    var typeOpts = ["ليرة إنجليزي","أونصة","سبيكة","مصاغ","أخرى"];
+    var karatOpts = ["18","21","22","24"];
+
+    var html = '<div class="card"><div class="grid2">' +
+      '<div class="stat"><div class="v">'+fmt(ils,"₪")+'</div><div class="l">بانتظار التحويل</div></div>' +
+      '<div class="stat good"><div class="v">'+fmt(usd,"$")+'</div><div class="l">رصيد الدولار (جاهز للشراء)</div></div>' +
+      '</div></div>';
+
+    // Holdings summary moved near the top, right under the balance stats.
+    html += goldSummaryCard(unsold, "ملخص الذهب المتوفر حاليًا");
+
+    html += '<div class="card"><h2><span class="ic">🔁</span> تحويل شيكل → دولار</h2>' +
+      '<div class="grid2"><div class="field"><label>المبلغ (₪)</label><input type="text" inputmode="decimal" id="gold-conv-amount" placeholder="0"></div>' +
+      '<div class="field"><label>سعر الصرف</label><input type="text" inputmode="decimal" id="gold-conv-rate" placeholder="مثلاً 3.7" step="0.01"></div></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="gold-convert">🔁 تحويل</button>' +
+      (convLog.length ? '<button class="btn btn-ghost" data-act="gold-undo" data-key="convert">↩ تراجع</button>' : '') + '</div>' +
+      (function(){ var v = logView("gold-conv", convLog);
+        return convLog.length ? '<table class="log" style="margin-top:10px;"><tr><th>التاريخ</th><th>₪</th><th>السعر</th><th>$</th></tr>' +
+          v.rows.map(function(c){ return '<tr><td>'+fmtDate(c.date)+'</td><td>'+fmt(c.amountILS)+'</td><td>'+c.rate+'</td><td>'+fmt(c.usd)+'</td></tr>'; }).join("") + '</table>' + v.toggle : ''; })() +
+      '</div>';
+
+    // Buy: unchanged free-form entry (type/karat/weight/price/location/serial) — this is how a lot is born.
+    html += '<div class="card"><h2><span class="ic">🛒</span> شراء ذهب</h2>' +
+      '<div class="grid3">' +
+      '<div class="field"><label>النوع</label><select id="gold-buy-type">'+typeOpts.map(function(t){return '<option>'+t+'</option>';}).join("")+'</select></div>' +
+      '<div class="field"><label>العيار</label><select id="gold-buy-karat">'+karatOpts.map(function(k){return '<option>'+k+'</option>';}).join("")+'</select></div>' +
+      '<div class="field"><label>الوزن</label><input type="text" inputmode="decimal" id="gold-buy-weight" placeholder="0" step="0.01"></div>' +
+      '</div>' +
+      '<div class="grid3">' +
+      '<div class="field"><label>السعر بالدولار ($)</label><input type="text" inputmode="decimal" id="gold-buy-price" placeholder="0"></div>' +
+      '<div class="field"><label>السعر بالشيكل (اختياري)</label><input type="text" inputmode="decimal" id="gold-buy-priceils" placeholder="0"></div>' +
+      '<div class="field"><label>المكان</label><input type="text" id="gold-buy-location" placeholder="مثلاً: الخزنة بالبيت"></div>' +
+      '</div>' +
+      '<div class="field"><label>الرقم التسلسلي</label><input type="text" id="gold-buy-serial" placeholder="Serial #"></div>' +
+      '<div class="row-actions"><button class="btn btn-primary" data-act="gold-trade" data-key="buy">🛒 شراء</button>' +
+      (buyLog.length ? '<button class="btn btn-ghost" data-act="gold-undo" data-key="buy">↩ تراجع</button>' : '') + '</div>' +
+      '</div>';
+
+    // Sell: lot-based — pick exactly which held piece is being sold, by its own serial/location/date.
+    html += '<div class="card"><h2><span class="ic">💰</span> بيع ذهب</h2>';
+    if(!unsold.length){
+      html += '<div class="empty">لا يوجد قطع متاحة للبيع حالياً</div></div>';
+    } else {
+      html += '<div class="field"><label>اختر القطعة</label><select id="gold-sell-lot">' +
+        '<option value="">— اختر —</option>' +
+        unsold.slice().sort(function(a,b){ return b.seq-a.seq; }).map(function(b){
+          return '<option value="'+b.id+'">'+esc(b.type)+' · عيار '+b.karat+' · '+b.weight+'غ · '+esc(b.serial||"بدون سيريال")+' · '+esc(b.location||"بدون مكان")+' · '+fmtDate(b.date)+'</option>';
+        }).join("") + '</select></div>' +
+        '<div class="grid2"><div class="field"><label>سعر البيع بالدولار ($)</label><input type="text" inputmode="decimal" id="gold-sell-price" placeholder="0"></div>' +
+        '<div class="field"><label>سعر البيع بالشيكل (اختياري)</label><input type="text" inputmode="decimal" id="gold-sell-priceils" placeholder="0"></div></div>' +
+        '<div class="row-actions"><button class="btn btn-danger" data-act="gold-sell">💰 بيع</button>' +
+        (sellLog.length ? '<button class="btn btn-ghost" data-act="gold-undo" data-key="sell">↩ تراجع</button>' : '') + '</div>' +
+        '</div>';
+    }
+
+    html += '<div class="card"><h2><span class="ic">🧾</span> سجل الشراء والبيع</h2>' +
+      '<div class="hint">شراء</div>' +
+      (function(){ var v = logView("gold-buyhist", buyLog);
+        return buyLog.length ? '<table class="log"><tr><th>التاريخ</th><th>النوع</th><th>العيار</th><th>الوزن</th><th>$</th><th>المكان</th><th>السيريال</th></tr>' +
+          v.rows.map(function(b){ return '<tr><td>'+fmtDate(b.date)+'</td><td>'+esc(b.type)+'</td><td>'+b.karat+'</td><td>'+b.weight+'</td><td>'+fmt(b.priceUSD)+'</td><td>'+esc(b.location||"—")+'</td><td>'+esc(b.serial||"—")+'</td></tr>'; }).join("") + '</table>' + v.toggle : '<div class="empty">لا يوجد</div>'; })() +
+      '<div class="hint" style="margin-top:10px;">بيع</div>' +
+      (function(){ var v = logView("gold-sellhist", sellLog);
+        return sellLog.length ? '<table class="log"><tr><th>التاريخ</th><th>النوع</th><th>العيار</th><th>الوزن</th><th>$</th><th>المكان</th><th>السيريال</th></tr>' +
+          v.rows.map(function(s){ return '<tr><td>'+fmtDate(s.date)+'</td><td>'+esc(s.type)+'</td><td>'+s.karat+'</td><td>'+s.weight+'</td><td>'+fmt(s.priceUSD)+'</td><td>'+esc(s.location||"—")+'</td><td>'+esc(s.serial||"—")+'</td></tr>'; }).join("") + '</table>' + v.toggle : '<div class="empty">لا يوجد</div>'; })() +
+      '</div>';
+
+    $("#page").innerHTML = html;
+  }
+
+  // Whatever the user is actively typing into right now — an income amount,
+  // a distribution box, a needs field, anything — is not part of `state` until
+  // its own change/blur handler commits it. If ANY unrelated action elsewhere
+  // on the page triggers a full re-render in the meantime (adding another item,
+  // a background sync landing, etc.), rebuilding #page's innerHTML would throw
+  // that in-progress value away even though the user never touched that field.
+  // Capturing the focused field before rebuilding and putting it right back
+  // after closes that whole class of "I typed it and it vanished" bug, no
+  // matter what triggers the re-render.
+  // A field also just loses focus the instant the user clicks a BUTTON — the
+  // browser blurs it before the click handler ever runs — so by the time
+  // render() checks document.activeElement it's already the button, not the
+  // field the user was just typing in. Tracking the most recently blurred
+  // field (via a page-wide focusout listener, registered further down) lets
+  // us fall back to "whatever was just being edited" in that case too.
+  var lastBlurred = null;
+  function captureFocus(){
+    var el = document.activeElement;
+    if(el && el.id && (el.tagName==="INPUT" || el.tagName==="TEXTAREA" || el.tagName==="SELECT")){
+      var snap = { id: el.id, value: el.value };
+      if(typeof el.selectionStart === "number"){ snap.selStart = el.selectionStart; snap.selEnd = el.selectionEnd; }
+      return snap;
+    }
+    if(lastBlurred && (Date.now() - lastBlurred.t) < 1000) return lastBlurred;
+    return null;
+  }
+  function restoreFocus(snap){
+    if(!snap) return;
+    var el = document.getElementById(snap.id);
+    if(!el) return;
+    el.value = snap.value;
+    el.focus();
+    if(typeof snap.selStart === "number" && el.setSelectionRange){
+      try{ el.setSelectionRange(snap.selStart, snap.selEnd); }catch(e){}
+    }
+  }
+  // Used by an action right after it successfully reads and commits a field's
+  // value, so a stale "this field was just blurred by the click" snapshot
+  // doesn't get restored on top of the deliberate clearing below.
+  function clearField(id){
+    var el = $("#"+id);
+    if(el) el.value = "";
+    if(lastBlurred && lastBlurred.id === id) lastBlurred = null;
+  }
+  function render(){
+    if(!state) return;
+    __diag.renders++;
+    var focusSnap = captureFocus();
+    renderTabs();
+    if(ui.page==="home") pageHome();
+    else if(SIMPLE_FUNDS.indexOf(ui.page)>=0) pageFund(ui.page);
+    else if(ui.page==="owedToMe" || ui.page==="iOwe") pageDebt(ui.page);
+    else if(ui.page==="gold") pageGold();
+    restoreFocus(focusSnap);
+  }
+  document.addEventListener("focusout", function(e){
+    var el = e.target;
+    if(el && el.id && (el.tagName==="INPUT" || el.tagName==="TEXTAREA" || el.tagName==="SELECT")){
+      var snap = { id: el.id, value: el.value, t: Date.now() };
+      if(typeof el.selectionStart === "number"){ snap.selStart = el.selectionStart; snap.selEnd = el.selectionEnd; }
+      lastBlurred = snap;
+    }
+  });
+
+  // ---------- events ----------
+  document.addEventListener("click", function(e){
+    var tabBtn = e.target.closest("button[data-page]");
+    if(tabBtn){ ui.page = tabBtn.getAttribute("data-page"); window.scrollTo({top:0}); render(); return; }
+
+    var actEl = e.target.closest("[data-act]");
+    if(actEl){
+      var act = actEl.getAttribute("data-act");
+      var key = actEl.getAttribute("data-key");
+      var goalId = actEl.getAttribute("data-goal");
+      // Temporary, persistent (non-fading) marker so it's possible to confirm
+      // from a screenshot, taken any time after the click, that the click was
+      // actually received here at all — independent of whatever the specific
+      // action function does afterward (success, validation toast, or a bug).
+      var dbg = document.getElementById("debug-line");
+      if(dbg) dbg.textContent = "آخر ضغطة: " + act +
+        " | pending الآن: " + (state.pending ? "موجود" : "فاضي") +
+        " | renders:" + __diag.renders + " boots:" + __diag.boots +
+        " | snapshots مطبّقة:" + __diag.snapApplied + " متجاهَلة(كتابة):" + __diag.snapSkippedPW + " متجاهَلة(قديمة):" + __diag.snapSkippedStale +
+        " | أول تحميل فيه pending: " + (__diag.lastGetHadPending===null?"؟":(__diag.lastGetHadPending?"نعم":"لا")) +
+        " | آخر تحديث فيه pending: " + (__diag.lastSnapHadPending===null?"؟":(__diag.lastSnapHadPending?"نعم":"لا"));
+      try{
+        if(act==="add-income") addIncome();
+        else if(act==="undo-income") undoIncome();
+        else if(act==="add-need") addNeedItem();
+        else if(act==="send") sendDistribution();
+        else if(act==="undo-send") undoSend();
+        else if(act==="fund-deposit") fundTransact(key,"deposit");
+        else if(act==="fund-withdraw") fundTransact(key,"withdraw");
+        else if(act==="fund-undo") undoFundLast(key);
+        else if(act==="fund-usd-convert") fundConvertToUSD(key);
+        else if(act==="fund-usd-undo") undoFundConvert(key);
+        else if(act==="goal-add") addSubGoal(key);
+        else if(act==="goal-remove") removeGoal(key, goalId);
+        else if(act==="goal-deposit") goalTransact(key, goalId, "deposit");
+        else if(act==="goal-withdraw") goalTransact(key, goalId, "withdraw");
+        else if(act==="goal-undo") undoGoalLast(key, goalId);
+        else if(act==="goal-usd-convert") goalConvertToUSD(key, goalId);
+        else if(act==="goal-usd-undo") undoGoalConvert(key, goalId);
+        else if(act==="goal-gold-buy") goalGoldBuy(key, goalId);
+        else if(act==="goal-gold-buy-undo") undoGoalGoldBuy(key, goalId);
+        else if(act==="debt-inc") debtRegister(key, key==="owedToMe" ? "lend" : "borrow");
+        else if(act==="debt-dec") debtRegister(key, "repay");
+        else if(act==="debt-undo") undoDebtLast(key);
+        else if(act==="gold-convert") goldConvert();
+        else if(act==="gold-undo") undoGold(key);
+        else if(act==="gold-trade") goldTrade(key);
+        else if(act==="gold-sell") goldSell();
+        else if(act==="fund-gold-buy") fundGoldBuy(key);
+        else if(act==="fund-gold-buy-undo") undoFundGoldBuy(key);
+        else if(act==="fund-gold-sell") fundGoldSell(key);
+        else if(act==="fund-gold-sell-undo") undoFundGoldSell(key);
+        else if(act==="stock-buy") stockBuy();
+        else if(act==="stock-buy-undo") undoStockBuy();
+        else if(act==="log-toggle"){
+          // Pure display toggle — not part of state, so a plain render() only
+          // (no persist/saveToDb): it never writes to Firestore and can't
+          // touch or lose any stored data.
+          var logId = actEl.getAttribute("data-log");
+          ui.expandedLogs[logId] = !ui.expandedLogs[logId];
+          render();
+        }
+      }catch(err){
+        // Belt-and-suspenders alongside the window "error" listener above: this
+        // catches it right at the source, with the specific action name, even
+        // in an environment where the global handler might not fire.
+        if(dbg) dbg.textContent = "⚠️ خطأ أثناء تنفيذ " + act + ": " + (err && err.message ? err.message : String(err));
+        console.error("action failed:", act, err);
+      }
+      return;
+    }
+
+    var needRemove = e.target.closest("[data-need-remove]");
+    if(needRemove){ removeNeedItem(needRemove.getAttribute("data-need-remove")); return; }
+
+    var personToggle = e.target.closest("[data-toggle-person]");
+    if(personToggle && !e.target.closest("[data-act]")){
+      var k = personToggle.getAttribute("data-toggle-person");
+      ui.openPerson[k] = !ui.openPerson[k];
+      render();
+      return;
+    }
+  });
+
+  document.addEventListener("change", function(e){
+    var t = e.target;
+    if(t.matches("[data-need-check]")) updateNeed(t.getAttribute("data-need-check"), "checked", t.checked);
+    else if(t.matches("[data-need-amount]")) updateNeed(t.getAttribute("data-need-amount"), "amount", t.value);
+    else if(t.matches("[data-need-name]")) updateNeed(t.getAttribute("data-need-name"), "name", t.value);
+  });
+
+  window.__moneyApp = { allocInput: updateAllocSummary };
+
+  // ---------- boot ----------
+  // Shown ONLY until the real saved data has loaded — the page must never let
+  // the user type into an interactive form that is still showing a temporary
+  // defaultState(), because the async DB fetch resolving afterwards would then
+  // overwrite (state = migrate(snap.data)) whatever they just typed, wiping it
+  // silently. This is what caused "typed a number / unchecked a box and it
+  // reverted" — the fetch was racing the user's very first tap on the page.
+  function renderLoading(){
+    renderTabs();
+    $("#page").innerHTML = '<div class="card"><div class="empty">جاري تحميل بياناتك…</div></div>';
+  }
+
+  // A DocumentSnapshot's body is read via snap.data() — a METHOD, not a plain
+  // property — per this artifact's db contract. Reading snap.data (no call)
+  // silently hands migrate() the function itself, which fails its typeof-object
+  // check and resets everything to blank defaults; that reset then renders,
+  // wiping the screen moments after every save (this was the real cause behind
+  // "types fine but reverts the second I move on", the missing distribution
+  // step after adding income, and the missing undo buttons — not a typing bug
+  // at all). Handled defensively here in case a future/older runtime ever
+  // serves `data` as a plain object instead.
+  function snapData(snap){
+    if(!snap) return undefined;
+    var d = snap.data;
+    return (typeof d === "function") ? d.call(snap) : d;
+  }
+
+  async function boot(){
+    __diag.boots++;
+    state = defaultState();
+    renderLoading();
+    try{
+      if(window.claude && window.claude.use){
+        db = await window.claude.use("db");
+        if(db){
+          docRef = db.doc("finance/state");
+          var snap = await docRef.get();
+          if(snap && snap.exists){ state = migrate(snapData(snap)); lastWrittenAt = state.updatedAt||0; }
+          else { state = migrate(null); lastWrittenAt = state.updatedAt||0; await docRef.set(state); }
+          __diag.lastGetHadPending = !!state.pending;
+          render();
+          docRef.onSnapshot(function(snap){
+            if(snap && snap.exists){
+              // A snapshot carrying our own not-yet-confirmed write is never real
+              // remote data to apply — it's an echo. This is the officially
+              // documented way to detect that (SnapshotMetadata.hasPendingWrites),
+              // and it doesn't depend on comparing clocks/timestamps at all, so it
+              // catches self-echoes even if updatedAt math ever lines up wrong.
+              if(snap.metadata && snap.metadata.hasPendingWrites){ __diag.snapSkippedPW++; return; }
+              var incoming = snapData(snap) || {};
+              // Belt-and-suspenders: also ignore snapshots that are just the server
+              // confirming a write we already applied locally — applying them again
+              // would re-render and wipe any unsaved input the user is mid-typing
+              // into a field that isn't part of `state` yet (like the income amount
+              // box, or a distribution allocation box).
+              if(incoming.updatedAt && incoming.updatedAt <= lastWrittenAt){ __diag.snapSkippedStale++; return; }
+              __diag.snapApplied++;
+              __diag.lastSnapHadPending = !!incoming.pending;
+              state = migrate(incoming);
+              lastWrittenAt = state.updatedAt||lastWrittenAt;
+              render();
+            }
+          });
+          return;
+        }
+      }
+    }catch(err){ console.error("db init failed", err); }
+    // No db available (or it failed) — nothing will overwrite us later, so it's
+    // safe to show the interactive page with whatever state we have now.
+    render();
+  }
+  boot();
+})();
+</script>
+
+</body>
+</html>
